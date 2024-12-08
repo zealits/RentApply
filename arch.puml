@@ -1,0 +1,53 @@
+@startuml
+skinparam backgroundColor #F7F7F7
+skinparam node {
+    BackgroundColor #A2E8F5
+    BorderColor #0288D1
+}
+skinparam cloud {
+    BackgroundColor #F5A623
+    BorderColor #F57C00
+}
+skinparam database {
+    BackgroundColor #D1C4E9
+    BorderColor #7E57C2
+}
+
+package "Client-Side" {
+    node "Frontend (React.js)" {
+        [Tenant Form]
+        [Portal Dashboard]
+        [Search and Manage Tenants]
+    }
+}
+
+package "Backend-Side" {
+    node "Server (Node.js + Express.js)" {
+        [API: Create Tenant Form]
+        [API: View Tenant Data]
+        [API: Update Tenant Data]
+        [API: Delete Tenant Data]
+        [API: Send Email]
+    }
+}
+
+database "Database (MongoDB)" {
+    [Tenant Information]
+}
+
+cloud "Email Service" {
+    [SendGrid/SMTP]
+}
+
+[Tenant Form] --> [API: Create Tenant Form] : "Submit form data"
+[Portal Dashboard] --> [API: View Tenant Data] : "Fetch data"
+[Portal Dashboard] --> [API: Update Tenant Data] : "Edit form data"
+[Portal Dashboard] --> [API: Delete Tenant Data] : "Delete entry"
+[Search and Manage Tenants] --> [API: View Tenant Data] : "Search/filter tenants"
+[API: Create Tenant Form] --> [Tenant Information] : "Save data"
+[API: View Tenant Data] --> [Tenant Information] : "Fetch data"
+[API: Update Tenant Data] --> [Tenant Information] : "Update entry"
+[API: Delete Tenant Data] --> [Tenant Information] : "Remove entry"
+[API: Send Email] --> [SendGrid/SMTP] : "Trigger email"
+[API: Create Tenant Form] --> [Send Email] : "Send filled details to tenant"
+@enduml
