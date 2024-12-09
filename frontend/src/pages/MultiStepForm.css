@@ -1,0 +1,222 @@
+/* MultiStepForm.css */
+
+/* Container Styling */
+.form-container-multi-step {
+    width: 90%;
+    /* max-width: 800px; */
+    margin: 2rem auto;
+    padding: 2rem;
+    background: #ffffff;
+    /* box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1); */
+    /* border-radius: 10px; */
+    overflow: hidden;
+  }
+  
+  /* Stepper Styling */
+  .stepper-multi-step {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 2rem;
+    position: relative;
+  }
+  
+  .step-multi-step {
+    flex: 1;
+    text-align: center;
+    position: relative;
+    cursor: pointer;
+    transition: color 0.3s, transform 0.3s;
+  }
+  
+  .step-multi-step:not(:last-child)::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    right: -50%;
+    width: 90%;
+    height: 6px;
+    background: #e4e4e4;
+    transform: translateY(-50%);
+  }
+  
+  .step-multi-step.active-step {
+    color: #007bff;
+    font-weight: bold;
+  }
+  
+  .step-multi-step.active-step:not(:last-child)::after {
+    background: #007bff;
+  }
+  
+  .step-icon-0,
+  .step-icon-1,
+  .step-icon-2,
+  .step-icon-3,
+  .step-icon-4,
+  .step-icon-5 {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+    display: inline-block;
+    background: #e4e4e4;
+    width: 60px;
+    height: 60px;
+    line-height: 60px;
+    border-radius: 50%;
+    transition: background 0.3s, transform 0.3s;
+  }
+  
+  .step-multi-step.active-step .step-icon-0,
+  .step-multi-step.active-step .step-icon-1,
+  .step-multi-step.active-step .step-icon-2,
+  .step-multi-step.active-step .step-icon-3,
+  .step-multi-step.active-step .step-icon-4,
+  .step-multi-step.active-step .step-icon-5 {
+    background: #007bff;
+    color: #ffffff;
+    transform: scale(1.1);
+  }
+  
+  /* Form Content Styling */
+  .form-step-content {
+    margin-bottom: 1.5rem;
+  }
+  
+  
+  
+/* setp 0 */
+.form-content-property-info {
+    max-width: 800px;
+    margin: 0 auto;
+    font-family: Arial, sans-serif;
+  }
+  
+  .form-title-property-info {
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 1.5rem;
+    font-weight: bold;
+  }
+  
+  .form-row {
+    display: flex;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+    gap: 20px;
+  }
+  
+  .form-group {
+    flex: 1 1 calc(33.33% - 20px);
+    min-width: 200px;
+  }
+  
+  .full-width {
+    flex: 1 1 100%;
+  }
+  
+  .form-label {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 0.9rem;
+    font-weight: 600;
+  }
+  
+  .form-input {
+    width: 100%;
+    padding: 10px;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+  }
+  
+  .form-input:focus {
+    border-color: #007bff;
+    outline: none;
+  }
+  
+  @media (max-width: 768px) {
+    .form-group {
+      flex: 1 1 100%;
+    }
+  }
+
+  /* step 1 */
+  
+  
+  
+  
+  
+  .form-input-property-address:focus,
+  .form-input-first-name:focus,
+  .form-input-employer-name:focus,
+  .form-input-checking-account:focus,
+  .form-textarea-occupants:focus,
+  .form-textarea-references:focus,
+  .form-textarea-comments:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 4px rgba(0, 123, 255, 0.5);
+    outline: none;
+  }
+
+  .form-navigation-multi-step {
+    /* background-color: red; */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+  }
+  
+  .btn-prev-multi-step,
+  .btn-next-multi-step,
+  .btn-submit-multi-step {
+    width: 120px; /* Fixed width for consistency */
+    padding: 10px 15px;
+    font-size: 1rem;
+    font-weight: bold;
+    text-align: center;
+    color: #fff;
+    background-color: #007bff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .btn-prev-multi-step:hover,
+  .btn-next-multi-step:hover,
+  .btn-submit-multi-step:hover {
+    background-color: #0056b3;
+  }
+  
+  .btn-prev-multi-step:disabled,
+  .btn-next-multi-step:disabled,
+  .btn-submit-multi-step:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+  }
+  
+  .btn-prev-multi-step {
+    background-color: #6c757d;
+  }
+  
+  .btn-prev-multi-step:hover {
+    background-color: #495057;
+  }
+  
+  .form-navigation-multi-step > button:not(:last-child) {
+    margin-right: 10px;
+  }
+  
+  @media (max-width: 768px) {
+    .form-navigation-multi-step {
+      flex-direction: column;
+      gap: 10px;
+    }
+  
+    .btn-prev-multi-step,
+    .btn-next-multi-step,
+    .btn-submit-multi-step {
+      width: 100%; /* Full width on smaller screens */
+    }
+  }
+  
