@@ -141,8 +141,241 @@
   }
 
   /* step 1 */
+  .form-content-occupants-history {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    font-family: Arial, sans-serif;
+  }
+  
+  .form-title-occupants-history {
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+  
+  .form-section-occupants,
+  .form-row {
+    margin-bottom: 20px;
+  }
+  
+  .occupant-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+  
+  .form-label {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    font-size: 0.9rem;
+    font-weight: bold;
+  }
+  
+  .form-input,
+  .form-select,
+  .form-textarea {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 0.9rem;
+    width: 100%;
+  }
+  
+  .form-textarea {
+    resize: vertical;
+  }
+  
+  .form-add-btn,
+  .form-remove-btn {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    font-size: 0.9rem;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .form-remove-btn {
+    background-color: #dc3545;
+  }
+  
+  .form-add-btn:hover,
+  .form-remove-btn:hover {
+    opacity: 0.9;
+  }
+  
+  @media (max-width: 768px) {
+    .occupant-row {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  }
+
+  /* step 2 */
+  /* General Form Section */
+.form-content-employment-info {
+    margin-bottom: 30px;
+    max-width: 800px;
+     margin: 0 auto;
+    padding: 20px;
+    font-family: Arial, sans-serif;
+  }
+  
+  .form-title-employment-info {
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+  
+  /* Form Sections */
+  .form-section {
+    margin-bottom: 20px;
+    padding: 15px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+  }
+  
+  /* Form Rows */
+  .form-row {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 15px;
+  }
+  
+  /* Form Labels */
+  .form-label {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    font-size: 0.9rem;
+    font-weight: bold;
+  }
+  
+  /* Form Inputs */
+  .form-input {
+    margin-top: 5px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 0.9rem;
+    width: 100%;
+  }
+  
+  /* Buttons */
+
+  .form-add-employer-btn ,
+  .form-remove-employer-btn{
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    font-size: 0.9rem;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  .form-remove-employer-btn{
+    background-color: #dc3545;
+    margin-bottom: 5px;
+  }
   
   
+  
+  .form-remove-btn:hover,
+  .form-add-btn:hover {
+    background-color: #0056b3;
+  }
+  
+  /* Responsive */
+  @media (max-width: 768px) {
+    .form-row {
+      flex-direction: column;
+      gap: 10px;
+    }
+  }
+  
+    /* step 3 */
+    /* Financial Information Section */
+
+  /* Container */
+.form-content-financial-info {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px;
+    font-family: Arial, sans-serif;
+  }
+  
+  .form-title-financial-info {
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+  
+  /* Row Layout */
+  .financial-detail-row {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 15px;
+    flex-wrap: wrap;
+  }
+  
+  /* Form Group */
+  .form-group {
+    flex: 1;
+    min-width: 200px;
+  }
+  
+  /* Label */
+  .form-label {
+    display: block;
+    font-size: 0.9rem;
+    font-weight: bold;
+    margin-bottom: 5px;
+  }
+  
+  /* Inputs and Selects */
+  .form-input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 0.9rem;
+    box-sizing: border-box;
+  }
+  
+  /* Buttons */
+  .form-add-btn,
+  .form-remove-btn {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    font-size: 0.9rem;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .form-remove-btn {
+    background-color: #dc3545;
+  }
+  
+  .form-add-btn:hover,
+  .form-remove-btn:hover {
+    opacity: 0.9;
+  }
+  
+  /* Responsive Adjustments */
+  @media (max-width: 768px) {
+    .financial-detail-row {
+      flex-direction: column;
+      gap: 15px;
+    }
+  }
   
   
   
