@@ -99,6 +99,32 @@ const MultiStepForm = () => {
     setFinancialDetails(updatedDetails);
   };
 
+  const [references, setReferences] = useState([{ name: "", phone: "", relationship: "" }]);
+  const [backgroundInfo, setBackgroundInfo] = useState({
+    lateRent: "",
+    lawsuit: "",
+    smoke: "",
+    pets: "",
+  });
+
+  const addReference = () => {
+    setReferences([...references, { name: "", phone: "", relationship: "" }]);
+  };
+
+  const handleReferenceChange = (index, field, value) => {
+    const updatedReferences = [...references];
+    updatedReferences[index][field] = value;
+    setReferences(updatedReferences);
+  };
+
+  const removeReference = (index) => {
+    setReferences(references.filter((_, i) => i !== index));
+  };
+
+  const handleBackgroundChange = (field, value) => {
+    setBackgroundInfo({ ...backgroundInfo, [field]: value });
+  };
+
   const renderFormContent = () => {
     switch (currentStep) {
       case 0:
@@ -470,7 +496,7 @@ const MultiStepForm = () => {
         );
       case 3:
         return (
-            <div className="form-content-financial-info">
+          <div className="form-content-financial-info">
             <h2 className="form-title-financial-info">Financial Information</h2>
             {financialDetails.map((detail, index) => (
               <div key={index} className="financial-detail-row">
@@ -521,11 +547,7 @@ const MultiStepForm = () => {
                   />
                 </div>
                 {financialDetails.length > 1 && (
-                  <button
-                    type="button"
-                    onClick={() => removeFinancialDetail(index)}
-                    className="form-remove-btn"
-                  >
+                  <button type="button" onClick={() => removeFinancialDetail(index)} className="form-remove-btn">
                     Remove
                   </button>
                 )}
@@ -535,21 +557,167 @@ const MultiStepForm = () => {
               Add Financial Detail
             </button>
           </div>
-          
         );
       case 4:
         return (
           <div className="form-content-references">
             <h2 className="form-title-references">References & Background Information</h2>
-            <label htmlFor="references" className="form-label-references">
-              References
-            </label>
-            <textarea
-              id="references"
-              name="references"
-              placeholder="Name, Phone, Relationship"
-              className="form-textarea-references"
-            ></textarea>
+
+            {/* References Section */}
+            <div className="references-section">
+              {references.map((reference, index) => (
+                <div key={index} className="reference-entry">
+                  <label className="form-label-reference-name">
+                    Name
+                    <input
+                      type="text"
+                      value={reference.name}
+                      onChange={(e) => handleReferenceChange(index, "name", e.target.value)}
+                      placeholder="Enter name"
+                      className="form-input-reference-name"
+                    />
+                  </label>
+
+                  <label className="form-label-reference-phone">
+                    Phone
+                    <input
+                      type="text"
+                      value={reference.phone}
+                      onChange={(e) => handleReferenceChange(index, "phone", e.target.value)}
+                      placeholder="Enter phone number"
+                      className="form-input-reference-phone"
+                    />
+                  </label>
+
+                  <label className="form-label-reference-relationship">
+                    Relationship
+                    <input
+                      type="text"
+                      value={reference.relationship}
+                      onChange={(e) => handleReferenceChange(index, "relationship", e.target.value)}
+                      placeholder="Enter relationship"
+                      className="form-input-reference-relationship"
+                    />
+                  </label>
+
+                  {references.length > 1 && (
+                    <button type="button" onClick={() => removeReference(index)} className="btn-remove-reference">
+                      Remove
+                    </button>
+                  )}
+                </div>
+              ))}
+              <button type="button" onClick={addReference} className="btn-add-reference">
+                Add Reference
+              </button>
+            </div>
+
+            {/* Background Information Section */}
+            <div className="background-info">
+              <label className="form-label-late-rent">
+                Have you ever been late or delinquent on rent?
+                <div>
+                  <label>
+                    <input
+                      type="radio"
+                      name="lateRent"
+                      value="Yes"
+                      checked={backgroundInfo.lateRent === "Yes"}
+                      onChange={(e) => handleBackgroundChange("lateRent", e.target.value)}
+                    />
+                    Yes
+                  </label>
+                  <label>
+                    <input
+                      type="radio"
+                      name="lateRent"
+                      value="No"
+                      checked={backgroundInfo.lateRent === "No"}
+                      onChange={(e) => handleBackgroundChange("lateRent", e.target.value)}
+                    />
+                    No
+                  </label>
+                </div>
+              </label>
+
+              <label className="form-label-lawsuit">
+                Have you ever been party to a lawsuit?
+                <div>
+                  <label>
+                    <input
+                      type="radio"
+                      name="lawsuit"
+                      value="Yes"
+                      checked={backgroundInfo.lawsuit === "Yes"}
+                      onChange={(e) => handleBackgroundChange("lawsuit", e.target.value)}
+                    />
+                    Yes
+                  </label>
+                  <label>
+                    <input
+                      type="radio"
+                      name="lawsuit"
+                      value="No"
+                      checked={backgroundInfo.lawsuit === "No"}
+                      onChange={(e) => handleBackgroundChange("lawsuit", e.target.value)}
+                    />
+                    No
+                  </label>
+                </div>
+              </label>
+
+              <label className="form-label-smoke">
+                Do you smoke?
+                <div>
+                  <label>
+                    <input
+                      type="radio"
+                      name="smoke"
+                      value="Yes"
+                      checked={backgroundInfo.smoke === "Yes"}
+                      onChange={(e) => handleBackgroundChange("smoke", e.target.value)}
+                    />
+                    Yes
+                  </label>
+                  <label>
+                    <input
+                      type="radio"
+                      name="smoke"
+                      value="No"
+                      checked={backgroundInfo.smoke === "No"}
+                      onChange={(e) => handleBackgroundChange("smoke", e.target.value)}
+                    />
+                    No
+                  </label>
+                </div>
+              </label>
+
+              <label className="form-label-pets">
+                Do you have any pets?
+                <div>
+                  <label>
+                    <input
+                      type="radio"
+                      name="pets"
+                      value="Yes"
+                      checked={backgroundInfo.pets === "Yes"}
+                      onChange={(e) => handleBackgroundChange("pets", e.target.value)}
+                    />
+                    Yes
+                  </label>
+                  <label>
+                    <input
+                      type="radio"
+                      name="pets"
+                      value="No"
+                      checked={backgroundInfo.pets === "No"}
+                      onChange={(e) => handleBackgroundChange("pets", e.target.value)}
+                    />
+                    No
+                  </label>
+                </div>
+              </label>
+            </div>
           </div>
         );
       case 5:
