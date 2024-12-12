@@ -381,84 +381,147 @@
 
   /* step 4 */
   /* References Section Styling */
+/* General Form Styling */
 .form-content-references {
-    margin-bottom: 30px;
-    max-width: 800px;
-     margin: 0 auto;
-    padding: 20px;
-    font-family: Arial, sans-serif;
-  }
-  
-  
-.form-title-references{
-    font-size: 1.5rem;
-    margin-bottom: 20px;
-    text-align: center;
+  margin-bottom: 30px;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: Arial, sans-serif;
 }
 
-  .form-label-reference-name,
-  .form-label-reference-phone,
-  .form-label-reference-relationship {
-    flex: 1; /* Ensure labels and inputs are responsive */
-    display: flex;
-    flex-direction: column;
-    font-weight: bold;
-    color: #444;
+.form-title-references {
+  font-size: 1.5rem;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+/* References Section */
+.references-section {
+  margin-bottom: 20px;
+}
+
+.reference-entry {
+  display: flex;
+  gap: 1rem; /* Space between fields */
+  align-items: flex-start;
+  margin-bottom: 15px;
+}
+
+.reference-entry label {
+  display: flex;
+  flex-direction: column;
+  flex: 1; /* Makes fields evenly spaced */
+  font-weight: bold;
+  font-size: 0.9rem;
+  color: #333;
+}
+
+.reference-entry input {
+  margin-top: 0.5rem;
+  padding: 0.5rem;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  width: 100%;
+  box-sizing: border-box;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.reference-entry input:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 4px rgba(0, 123, 255, 0.3);
+  outline: none;
+}
+
+.btn-remove-reference {
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  background-color: #dc3545;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.btn-remove-reference:hover {
+  background-color: #c82333;
+  transform: scale(1.05);
+}
+
+.btn-add-reference {
+  display: block;
+  margin: 1rem 0;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.btn-add-reference:hover {
+  background-color: #0056b3;
+  transform: scale(1.05);
+}
+
+/* General Styling for Background Information Section */
+.background-info {
+  margin-top: 20px;
+}
+
+.background-info label {
+  display: block;
+  margin-bottom: 10px;
+  font-weight: bold;
+  font-size: 1rem;
+  color: #333;
+}
+
+/* Styling for Radio Button Questions */
+.background-info div {
+  margin-top: 10px;
+  display: flex;
+  gap: 1.5rem; /* Space between Yes and No options */
+  align-items: center;
+}
+
+.background-info div label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem; /* Space between radio button and label */
+  font-weight: normal;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.background-info input[type="radio"] {
+  accent-color: #007bff; /* Style the radio button */
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+  transition: transform 0.2s ease-in-out;
+}
+
+.background-info input[type="radio"]:hover {
+  transform: scale(1.1); /* Slightly enlarge on hover */
+}
+
+/* Media Queries for Responsiveness */
+@media (max-width: 768px) {
+  .background-info div {
+    flex-direction: column; /* Stack radio buttons on smaller screens */
+    gap: 0.5rem;
   }
+}
+
+
   
-  .form-input-reference-name,
-  .form-input-reference-phone,
-  .form-input-reference-relationship {
-    margin-top: 0.5rem;
-    padding: 0.5rem;
-    font-size: 1rem;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    width: 100%; /* Ensure inputs fill their column */
-    box-sizing: border-box; /* Prevent padding from affecting width */
-    transition: border-color 0.3s, box-shadow 0.3s;
-  }
+ 
   
-  .form-input-reference-name:focus,
-  .form-input-reference-phone:focus,
-  .form-input-reference-relationship:focus {
-    border-color: #007bff;
-    box-shadow: 0 0 4px rgba(0, 123, 255, 0.5);
-    outline: none;
-  }
-  
-  .btn-remove-reference {
-    padding: 0.5rem 1rem;
-    font-size: 0.875rem;
-    color: #fff;
-    background: #dc3545;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background 0.3s, transform 0.3s;
-  }
-  
-  .btn-remove-reference:hover {
-    background: #c82333;
-    transform: scale(1.05);
-  }
-  
-  .btn-add-reference {
-    margin-top: 1rem;
-    padding: 0.75rem 1.5rem;
-    font-size: 1rem;
-    color: #fff;
-    background: #007bff;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background 0.3s, transform 0.3s;
-  }
-  
-  .btn-add-reference:hover {
-    background: #0056b3;
-    transform: scale(1.05);
-  }
   
   
   .form-input-property-address:focus,
