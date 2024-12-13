@@ -31,7 +31,7 @@
   .step-multi-step:not(:last-child)::after {
     content: "";
     position: absolute;
-    top: 50%;
+    top: 45%;
     right: -50%;
     width: 90%;
     height: 6px;
@@ -75,6 +75,8 @@
     color: #ffffff;
     transform: scale(1.1);
   }
+
+  
   
   /* Form Content Styling */
   .form-step-content {
@@ -382,6 +384,8 @@
   /* step 4 */
   /* References Section Styling */
 /* General Form Styling */
+
+
 .form-content-references {
   margin-bottom: 30px;
   max-width: 800px;
@@ -517,6 +521,80 @@
     gap: 0.5rem;
   }
 }
+
+/* step 6 */
+.form-content-final-comments {
+  margin-bottom: 30px;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: Arial, sans-serif;
+}
+
+.form-title-final-comments {
+  font-size: 1.5rem;
+  margin-bottom: 20px;
+  text-align: center;
+  color: #333;
+}
+
+.form-label-comments {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #555;
+  margin-bottom: 10px;
+  display: block;
+}
+
+.form-textarea-comments {
+  width: 100%;
+  height: 150px;
+  padding: 12px;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+  resize: vertical;
+  box-sizing: border-box;
+  transition: border-color 0.3s ease, background-color 0.3s ease;
+}
+
+.form-textarea-comments:focus {
+  outline: none;
+  border-color: #5c9dfc;
+  background-color: #ffffff;
+}
+
+.form-textarea-comments::placeholder {
+  color: #bbb;
+  font-style: italic;
+}
+
+.form-textarea-comments:focus::placeholder {
+  color: #888;
+}
+
+/* Mobile responsive adjustments */
+@media (max-width: 768px) {
+  .form-content-final-comments {
+    padding: 15px;
+  }
+
+  .form-title-final-comments {
+    font-size: 1.2rem;
+  }
+
+  .form-label-comments {
+    font-size: 0.9rem;
+  }
+
+  .form-textarea-comments {
+    height: 120px;
+  }
+}
+
+
+
 
 
   

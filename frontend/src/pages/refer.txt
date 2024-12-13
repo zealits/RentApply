@@ -1,4 +1,168 @@
 import React, { useState } from "react";
+
+const MultiStepForm = () => {
+  const [currentStep, setCurrentStep] = useState(0); // Track current step
+  const [formData, setFormData] = useState({
+    step1: {
+      propertyAddress: "",
+      firstName: "",
+      middleName: "",
+      lastName: "",
+      birthDate: "",
+      socialSecurity: "",
+      emailAddress: "",
+      phoneNumber: "",
+      driversLicense: "",
+    },
+    step2: {
+      occupants: [{ name: "", dob: "", relationship: "" }],
+      housingVoucher: "",
+      priorAddress: "",
+      monthlyRent: "",
+      startDate: "",
+      endDate: "",
+      reasonForMoving: "",
+      ownerManagerName: "",
+      ownerManagerPhone: "",
+    },
+    step3: {
+      employers: [
+        {
+          employerName: "",
+          occupation: "",
+          employerAddress: "",
+          employerPhone: "",
+          startDate: "",
+          monthlyPay: "",
+          supervisorName: "",
+        },
+      ],
+    },
+    step4: {
+      financialDetails: [{ type: "Checking Account", bank: "", balance: "" }],
+    },
+    step5: {
+      references: [{ name: "", phone: "", relationship: "" }],
+      backgroundInfo: {
+        lateRent: "",
+        lawsuit: "",
+        smoke: "",
+        pets: "",
+      },
+    },
+    step6: {
+      comments: "",
+    },
+  });
+
+  const steps = [
+    { name: "Step 1", icon: "🔑" },
+    { name: "Step 2", icon: "🏡" },
+    { name: "Step 3", icon: "💼" },
+    { name: "Step 4", icon: "💵" },
+    { name: "Step 5", icon: "📞" },
+    { name: "Step 6", icon: "📝" },
+  ];
+
+  const checkProgress = (step) => {
+    const stepData = formData[step];
+    const allFields = [];
+
+    // Loop through all fields in the step
+    for (const key in stepData) {
+      if (Array.isArray(stepData[key])) {
+        stepData[key].forEach((item) => {
+          for (const field in item) {
+            allFields.push(item[field]);
+          }
+        });
+      } else {
+        allFields.push(stepData[key]);
+      }
+    }
+
+    // Calculate how many fields are filled
+    const filledFields = allFields.filter((field) => field !== "").length;
+    return (filledFields / allFields.length) * 100; // Return percentage of completion
+  };
+
+  const updateStep = (index) => {
+    setCurrentStep(index);
+  };
+
+  const renderFormContent = () => {
+    // Render different form fields based on the current step
+    switch (currentStep) {
+      case 0:
+        return <div>Step 1 Content</div>;
+      case 1:
+        return <div>Step 2 Content</div>;
+      case 2:
+        return <div>Step 3 Content</div>;
+      case 3:
+        return <div>Step 4 Content</div>;
+      case 4:
+        return <div>Step 5 Content</div>;
+      case 5:
+        return <div>Step 6 Content</div>;
+      default:
+        return null;
+    }
+  };
+
+  return (
+    <div className="form-container-multi-step">
+      {/* Stepper */}
+      <div className="stepper-multi-step">
+        {steps.map((step, index) => {
+          const progress = checkProgress(`step${index + 1}`); // Get progress for each step
+          return (
+            <div
+              key={index}
+              className={`step-multi-step ${index <= currentStep ? "active-step" : ""}`}
+              onClick={() => updateStep(index)}
+            >
+              <span
+                className={`step-icon-${index}`}
+                style={{ background: `linear-gradient(90deg, #007bff ${progress}%, #e4e4e4 ${progress}%)` }}
+              >
+                {step.icon}
+              </span>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Form */}
+      <form id="tenantForm" className="form-multi-step">
+        <div className="form-step-content">{renderFormContent()}</div>
+
+        <div className="form-navigation-multi-step">
+          {currentStep > 0 && (
+            <button type="button" className="btn-prev-multi-step" onClick={() => updateStep(currentStep - 1)}>
+              Previous
+            </button>
+          )}
+          {currentStep < steps.length - 1 ? (
+            <button type="button" className="btn-next-multi-step" onClick={() => updateStep(currentStep + 1)}>
+              Next
+            </button>
+          ) : (
+            <button type="submit" className="btn-submit-multi-step">
+              Submit
+            </button>
+          )}
+        </div>
+      </form>
+    </div>
+  );
+};
+
+
+
+
+///
+import React, { useState } from "react";
 import "./MultiStepForm.css"; // Add your custom CSS for styling
 import { FaHome, FaUsers, FaBriefcase, FaWallet, FaAddressBook, FaCommentDots } from "react-icons/fa";
 
@@ -248,8 +412,31 @@ const MultiStepForm = () => {
 
   const updateStep = (step) => {
     if (step >= 0 && step < steps.length) {
+      console.log(step);
       setCurrentStep(step);
     }
+  };
+
+  const checkProgress = (step) => {
+    const stepData = formData[step];
+    const allFields = [];
+
+    // Loop through all fields in the step
+    for (const key in stepData) {
+      if (Array.isArray(stepData[key])) {
+        stepData[key].forEach((item) => {
+          for (const field in item) {
+            allFields.push(item[field]);
+          }
+        });
+      } else {
+        allFields.push(stepData[key]);
+      }
+    }
+
+    // Calculate how many fields are filled
+    const filledFields = allFields.filter((field) => field !== "").length;
+    return (filledFields / allFields.length) * 100; // Return percentage of completion
   };
 
   const renderFormContent = () => {
@@ -954,15 +1141,23 @@ const MultiStepForm = () => {
     <div className="form-container-multi-step">
       {/* Stepper */}
       <div className="stepper-multi-step">
-        {steps.map((step, index) => (
-          <div
-            key={index}
-            className={`step-multi-step ${index <= currentStep ? "active-step" : ""}`}
-            onClick={() => updateStep(index)}
-          >
-            <span className={`step-icon-${index}`}>{step.icon}</span> {/* Render the icon as a React component */}
-          </div>
-        ))}
+        {steps.map((step, index) => {
+          const progress = checkProgress(`step${index + 1}`); // Get progress for each step
+          return (
+            <div
+              key={index}
+              className={`step-multi-step ${index <= currentStep ? "active-step" : ""}`}
+              onClick={() => updateStep(index)}
+            >
+              <span
+                className={`step-icon-${index}`}
+                style={{ background: `linear-gradient(90deg, #007bff ${progress}%, #e4e4e4 ${progress}%)` }}
+              >
+                {step.icon}
+              </span>
+            </div>
+          );
+        })}
       </div>
 
       {/* Form */}
