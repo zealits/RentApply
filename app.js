@@ -12,8 +12,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 // app.use(fileUpload());
 
 //Route Imports
-// const product = require("./routes/productRoute");
-// const venue = require("./routes/venueRoute");
+
 
 // app.use("/api/z1",product);
 
