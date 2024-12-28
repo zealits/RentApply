@@ -231,12 +231,32 @@ const MultiStepForm = () => {
   };
 
   // above for step 6
-  const handleSubmit = (e) => {
-    e.preventDefault(); // Prevent default form submission behavior
-
-    console.log("Form Data:", formData);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      console.log("Form data being sent:", FormData); // Log the form data
+      const response = await fetch("http://localhost:5000/api/submit-form", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+  
+      if (!response.ok) {
+        throw new Error("Failed to submit form");
+      }
+  
+      const result = await response.json();
+      console.log("Form submitted successfully:", result);
+    } catch (error) {
+      console.error("Error submitting form:", error);
+    }
   };
-
+  
+  
+  
+  
   const steps = [
     { icon: <FaHome />, title: "Property & Personal Information" },
     { icon: <FaUsers />, title: "Occupants & Housing History" },

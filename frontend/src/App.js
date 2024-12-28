@@ -8,9 +8,6 @@ import MultiStepForm from "./pages/MultiStepForm.js"
 
 function App() {
  
-  
-
-  
   return (
     <div>
       <Router>

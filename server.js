@@ -10,6 +10,8 @@ process.on("uncaughtException", (err) => {
   process.exit(1);
 });
 
+// app.use(express.urlencoded({ extended: true }));
+
 //config
 dotenv.config({ path: "config/config.env" });
 
