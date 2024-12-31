@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import "./MultiStepForm.css"; // Add your custom CSS for styling
 import { FaHome, FaUsers, FaBriefcase, FaWallet, FaAddressBook, FaCommentDots } from "react-icons/fa";
-
+//code starts here 
 const MultiStepForm = () => {
   const [currentStep, setCurrentStep] = useState(0);
 
