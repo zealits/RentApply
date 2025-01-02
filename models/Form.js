@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+const mongoose = require("mongoose"); 
 
 const OccupantSchema = new mongoose.Schema({
   name: { type: String, required: true },
@@ -37,7 +37,11 @@ const BackgroundInfoSchema = new mongoose.Schema({
 
 const TenantForm = new mongoose.Schema({
   step1: {
-    propertyAddress: { type: String, required: true },
+    propertyAddress: { type: String, required: true }, // Full property address
+    streetAddressAbbreviation: { type: String },      // Optional street address abbreviation
+    city: { type: String, required: true },           // City of the property
+    state: { type: String, required: true },          // State (e.g. DC)
+    zipCode: { type: String, required: true },        // ZIP Code
     firstName: { type: String, required: true },
     middleName: { type: String },
     lastName: { type: String, required: true },
@@ -69,7 +73,9 @@ const TenantForm = new mongoose.Schema({
     backgroundInfo: BackgroundInfoSchema,
   },
   step6: {
-    comments: { type: String },
+    comments: { type: String, required: false },  // Updated: added field for user comments
+    moveReason: { type: String, required: false }, // Optional field for the reason for moving
+    creditCheckComments: { type: String, required: false },  // Optional field for credit check comments
   },
 });
 
