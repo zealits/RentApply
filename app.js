@@ -1,5 +1,5 @@
 const express = require("express");
-const cors = require("cors"); // Import cors middleware
+const cors = require("cors");
 const app = express();
 const path = require("path");
 const errorMiddleware = require("./middleware/error");
@@ -7,6 +7,7 @@ const cookieParser = require("cookie-parser");
 const bodyParser = require("body-parser");
 const formRoutes = require('./routes/formRoutes');
 const router = express.Router();
+
 
 // const connectDB = require("./config/database");
 
@@ -42,6 +43,11 @@ app.use(bodyParser.urlencoded({ extended: true }));
 // app.use('/api/properties', propertyRoutes);
 // app.use('/api/applications', applicationRoutes);
 app.use('/api', formRoutes); // The routes are prefixed with /api
+
+app.use(cors(corsOptions));
+app.use(express.json()); // Parse JSON bodies
+app.use(cookieParser());
+app.use(bodyParser.urlencoded({ extended: true }));
 
 
 // Serve static files (React build) for production

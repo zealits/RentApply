@@ -1,5 +1,3 @@
-//Multistepform.js
-
 import React, { useState } from "react";
 import "./MultiStepForm.css"; // Add your custom CSS for styling
 import { FaHome, FaUsers, FaBriefcase, FaWallet, FaAddressBook, FaCommentDots } from "react-icons/fa";
@@ -10,15 +8,19 @@ const MultiStepForm = () => {
 
   const [formData, setFormData] = useState({
     step1: {
-      propertyAddress: "",
-      firstName: "",
-      middleName: "",
-      lastName: "",
-      birthDate: "",
-      socialSecurity: "",
-      emailAddress: "",
-      phoneNumber: "",
-      driversLicense: "",
+      propertyAddress: "",               // Full property address (Street, City, State, ZIP code)
+      streetAddressAbbreviation: "",     // Optional: street address abbreviation (e.g., Ave NW, Blvd)
+      city: "",                          // City of the property
+      state: "",                         // State of the property (e.g., DC, CA)
+      zipCode: "",                       // ZIP code of the property
+      firstName: "",                     // Tenant's first name
+      middleName: "",                    // Tenant's middle name (optional)
+      lastName: "",                      // Tenant's last name
+      birthDate: "",                     // Tenant's birth date
+      socialSecurity: "",                // Tenant's social security number
+      emailAddress: "",                  // Tenant's email address
+      phoneNumber: "",                   // Tenant's phone number
+      driversLicense: "",                // Tenant's driver's license number
     },
     step2: {
       occupants: [
@@ -60,7 +62,10 @@ const MultiStepForm = () => {
     },
     step6: {
       comments: "",
-    },
+      moveReason: "",              // Store the reason for moving
+      creditCheckComments: "",     // Store comments regarding credit/background check
+    }
+    
   });
 
   // below for step 2
@@ -265,9 +270,25 @@ const MultiStepForm = () => {
     const newErrors = {};
     const { step1 } = formData;
 
-    if (!step1.propertyAddress.trim()) {
-      newErrors.propertyAddress = "Property Address is required.";
-    }
+      // Validate required fields
+  if (!step1.propertyAddress.trim()) {
+    newErrors.propertyAddress = "Property Address is required.";
+  }
+  if (!step1.city.trim()) {
+    newErrors.city = "City is required.";
+  }
+  if (!step1.state.trim()) {
+    newErrors.state = "State is required.";
+  }
+  if (!step1.zipCode.trim()) {
+    newErrors.zipCode = "ZIP Code is required.";
+  } else if (!/^\d{5}$/.test(step1.zipCode)) { // Validate ZIP Code format (5 digits)
+    newErrors.zipCode = "Invalid ZIP Code format.";
+  }
+  // Optionally validate Street Address Abbreviation if it's provided
+  if (step1.streetAddressAbbreviation && !/^[A-Za-z\s.]+$/.test(step1.streetAddressAbbreviation)) {
+    newErrors.streetAddressAbbreviation = "Invalid Street Address Abbreviation format.";
+  }
     if (!step1.firstName.trim()) {
       newErrors.firstName = "First Name is required.";
     }
@@ -403,6 +424,27 @@ const MultiStepForm = () => {
     return Object.keys(newErrors).length === 0;
   };
   
+//comment change :
+const handleMoveReasonChange = (value) => {
+  setFormData({
+    ...formData,
+    step6: {
+      ...formData.step6,
+      moveReason: value,
+    },
+  });
+};
+
+const handleCreditCheckCommentsChange = (value) => {
+  setFormData({
+    ...formData,
+    step6: {
+      ...formData.step6,
+      creditCheckComments: value,
+    },
+  });
+};
+
 
   
   const handleSubmit = async (e) => {
@@ -457,33 +499,11 @@ const MultiStepForm = () => {
       case 0:
         return (
           <div className="form-content-property-info">
-  <h2 className="form-title-property-info">Property & Personal Information</h2>
+  <h2 className="form-title-property-info">Personal Information</h2>
 
   <div className="form-row">
-    {/* Property Address */}
-    <label htmlFor="propertyAddress" className="form-label">
-      Property Address You Are Applying For <span className="required">*</span>
-    </label>
-    <input
-      type="text"
-      id="propertyAddress"
-      name="propertyAddress"
-      placeholder="Enter property address"
-      className="form-input full-width"
-      value={formData.step1.propertyAddress}
-      onChange={(e) =>
-        setFormData((prev) => ({
-          ...prev,
-          step1: { ...prev.step1, propertyAddress: e.target.value },
-        }))
-      }
-    />
-    {errors.propertyAddress && <span className="error-message">{errors.propertyAddress}</span>}
-  </div>
-
-  <div className="form-row">
-    {/* First Name */}
-    <div className="form-group">
+    {/* Personal Information Section */}
+    <div className="form-group w-full sm:w-1/2 md:w-1/3">
       <label htmlFor="firstName" className="form-label">
         First Name <span className="required">*</span>
       </label>
@@ -503,8 +523,9 @@ const MultiStepForm = () => {
       />
       {errors.firstName && <span className="error-message">{errors.firstName}</span>}
     </div>
+
     {/* Middle Name */}
-    <div className="form-group">
+    <div className="form-group w-full sm:w-1/2 md:w-1/3">
       <label htmlFor="middleName" className="form-label">
         Middle Name
       </label>
@@ -523,8 +544,9 @@ const MultiStepForm = () => {
         }
       />
     </div>
+
     {/* Last Name */}
-    <div className="form-group">
+    <div className="form-group w-full sm:w-1/2 md:w-1/3">
       <label htmlFor="lastName" className="form-label">
         Last Name <span className="required">*</span>
       </label>
@@ -548,7 +570,7 @@ const MultiStepForm = () => {
 
   <div className="form-row">
     {/* Birth Date */}
-    <div className="form-group">
+    <div className="form-group w-full sm:w-1/2 md:w-1/3">
       <label htmlFor="birthDate" className="form-label">
         Birth Date <span className="required">*</span>
       </label>
@@ -569,7 +591,7 @@ const MultiStepForm = () => {
     </div>
 
     {/* Social Security */}
-    <div className="form-group">
+    <div className="form-group w-full sm:w-1/2 md:w-1/3">
       <label htmlFor="socialSecurity" className="form-label">
         Social Security # <span className="required">*</span>
       </label>
@@ -591,7 +613,7 @@ const MultiStepForm = () => {
     </div>
 
     {/* Email */}
-    <div className="form-group">
+    <div className="form-group w-full sm:w-1/2 md:w-1/3">
       <label htmlFor="emailAddress" className="form-label">
         Email Address <span className="required">*</span>
       </label>
@@ -615,7 +637,7 @@ const MultiStepForm = () => {
 
   <div className="form-row">
     {/* Phone Number */}
-    <div className="form-group">
+    <div className="form-group w-full sm:w-1/2 md:w-1/3">
       <label htmlFor="phoneNumber" className="form-label">
         Phone Number <span className="required">*</span>
       </label>
@@ -637,7 +659,7 @@ const MultiStepForm = () => {
     </div>
 
     {/* Driver's License */}
-    <div className="form-group">
+    <div className="form-group w-full sm:w-1/2 md:w-1/3">
       <label htmlFor="driversLicense" className="form-label">
         Driver's License # <span className="required">*</span>
       </label>
@@ -658,6 +680,128 @@ const MultiStepForm = () => {
       {errors.driversLicense && <span className="error-message">{errors.driversLicense}</span>}
     </div>
   </div>
+  <h2 className="form-title-property-info">Address Information</h2>
+  <div className="form-row">
+  {/* Property Address */}
+  <div className="form-group w-full sm:w-1/2 md:w-1/3">
+    <label htmlFor="propertyAddress" className="form-label">
+      Property Address You Are Applying For <span className="required">*</span>
+    </label>
+    <input
+      type="text"
+      id="propertyAddress"
+      name="propertyAddress"
+      placeholder="Enter property address (e.g. 1600 Pennsylvania Ave NW)"
+      className="form-input"
+      value={formData.step1.propertyAddress}
+      onChange={(e) =>
+        setFormData((prev) => ({
+          ...prev,
+          step1: { ...prev.step1, propertyAddress: e.target.value },
+        }))
+      }
+    />
+    {errors.propertyAddress && <span className="error-message">{errors.propertyAddress}</span>}
+  </div>
+</div>
+
+<div className="form-row">
+  {/* Street Address Abbreviation */}
+  <div className="form-group w-full sm:w-1/2 md:w-1/3">
+    <label htmlFor="streetAddressAbbreviation" className="form-label">
+      Street Address Abbreviation (optional)
+    </label>
+    <input
+      type="text"
+      id="streetAddressAbbreviation"
+      name="streetAddressAbbreviation"
+      placeholder="Optional: Ave NW, St, Blvd"
+      className="form-input"
+      value={formData.step1.streetAddressAbbreviation}
+      onChange={(e) =>
+        setFormData((prev) => ({
+          ...prev,
+          step1: { ...prev.step1, streetAddressAbbreviation: e.target.value },
+        }))
+      }
+    />
+    {errors.streetAddressAbbreviation && (
+      <span className="error-message">{errors.streetAddressAbbreviation}</span>
+    )}
+  </div>
+</div>
+
+<div className="form-row">
+  {/* City */}
+  <div className="form-group w-full sm:w-1/2 md:w-1/3">
+    <label htmlFor="city" className="form-label">
+      City <span className="required">*</span>
+    </label>
+    <input
+      type="text"
+      id="city"
+      name="city"
+      placeholder="Enter city (e.g. Washington)"
+      className="form-input"
+      value={formData.step1.city}
+      onChange={(e) =>
+        setFormData((prev) => ({
+          ...prev,
+          step1: { ...prev.step1, city: e.target.value },
+        }))
+      }
+    />
+    {errors.city && <span className="error-message">{errors.city}</span>}
+  </div>
+</div>
+
+<div className="form-row">
+  {/* State */}
+  <div className="form-group w-full sm:w-1/2 md:w-1/3">
+    <label htmlFor="state" className="form-label">
+      State <span className="required">*</span>
+    </label>
+    <input
+      type="text"
+      id="state"
+      name="state"
+      placeholder="Enter state (e.g. DC)"
+      className="form-input"
+      value={formData.step1.state}
+      onChange={(e) =>
+        setFormData((prev) => ({
+          ...prev,
+          step1: { ...prev.step1, state: e.target.value },
+        }))
+      }
+    />
+    {errors.state && <span className="error-message">{errors.state}</span>}
+  </div>
+</div>
+
+<div className="form-row">
+  {/* ZIP Code */}
+  <div className="form-group w-full sm:w-1/2 md:w-1/3">
+    <label htmlFor="zipCode" className="form-label">
+      ZIP Code <span className="required">*</span>
+    </label>
+    <input
+      type="text"
+      id="zipCode"
+      name="zipCode"
+      placeholder="Enter ZIP code (e.g. 20500)"
+      className="form-input"
+      value={formData.step1.zipCode}
+      onChange={(e) =>
+        setFormData((prev) => ({
+          ...prev,
+          step1: { ...prev.step1, zipCode: e.target.value },
+        }))
+      }
+    />
+    {errors.zipCode && <span className="error-message">{errors.zipCode}</span>}
+  </div>
+</div>
 </div>
 
         );
@@ -1028,211 +1172,235 @@ const MultiStepForm = () => {
         );
       case 4:
         return (
-          <div className="form-content-references">
-  <h2 className="form-title-references">References & Background Information</h2>
-
-  {/* References Section */}
-  <div className="references-section">
-    {formData.step5.references.map((reference, index) => (
-      <div key={index} className="reference-entry">
-        <label className="form-label-reference-name">
-          Name <span className="required">*</span>
-          <input
-            type="text"
-            value={reference.name}
-            onChange={(e) => handleReferenceChange(index, "name", e.target.value)}
-            placeholder="Enter name"
-            className="form-input-reference-name"
-          />
-          {errors[`reference-name-${index}`] && (
-            <div className="error-message">{errors[`reference-name-${index}`]}</div>
-          )}
-        </label>
-
-        <label className="form-label-reference-phone">
-          Phone <span className="required">*</span>
-          <input
-            type="text"
-            value={reference.phone}
-            onChange={(e) => handleReferenceChange(index, "phone", e.target.value)}
-            placeholder="Enter phone number"
-            className="form-input-reference-phone"
-          />
-          {errors[`reference-phone-${index}`] && (
-            <div className="error-message">{errors[`reference-phone-${index}`]}</div>
-          )}
-        </label>
-
-        <label className="form-label-reference-relationship">
-          Relationship <span className="required">*</span>
-          <input
-            type="text"
-            value={reference.relationship}
-            onChange={(e) => handleReferenceChange(index, "relationship", e.target.value)}
-            placeholder="Enter relationship"
-            className="form-input-reference-relationship"
-          />
-          {errors[`reference-relationship-${index}`] && (
-            <div className="error-message">{errors[`reference-relationship-${index}`]}</div>
-          )}
-        </label>
-
-        {/* Remove button only if there are multiple references */}
-        {formData.step5.references.length > 1 && (
-          <button
-            type="button"
-            onClick={() => removeReference(index)}
-            className="btn-remove-reference"
-          >
-            Remove
-          </button>
-        )}
-      </div>
-    ))}
-    {/* Add Reference Button */}
-    <button
-      type="button"
-      onClick={addReference}
-      className="btn-add-reference"
-    >
-      Add Reference
-    </button>
-  </div>
-
-  {/* Background Information Section */}
-  <div className="background-info">
-    {/* Late Rent Payment */}
-    <label className="form-label-late-rent">
-      Have you ever been late or delinquent on rent? <span className="required">*</span>
-      <div className="radio-group">
-        <label>
-          <input
-            type="radio"
-            name="lateRent"
-            value="Yes"
-            checked={formData.step5.backgroundInfo.lateRent === "Yes"}
-            onChange={(e) => handleBackgroundChange("lateRent", e.target.value)}
-          />
-          Yes
-        </label>
-        <label>
-          <input
-            type="radio"
-            name="lateRent"
-            value="No"
-            checked={formData.step5.backgroundInfo.lateRent === "No"}
-            onChange={(e) => handleBackgroundChange("lateRent", e.target.value)}
-          />
-          No
-        </label>
-      </div>
-      {errors.lateRent && <div className="error-message">{errors.lateRent}</div>}
-    </label>
-
-    {/* Lawsuit History */}
-    <label className="form-label-lawsuit">
-      Have you ever been party to a lawsuit? <span className="required">*</span>
-      <div className="radio-group">
-        <label>
-          <input
-            type="radio"
-            name="lawsuit"
-            value="Yes"
-            checked={formData.step5.backgroundInfo.lawsuit === "Yes"}
-            onChange={(e) => handleBackgroundChange("lawsuit", e.target.value)}
-          />
-          Yes
-        </label>
-        <label>
-          <input
-            type="radio"
-            name="lawsuit"
-            value="No"
-            checked={formData.step5.backgroundInfo.lawsuit === "No"}
-            onChange={(e) => handleBackgroundChange("lawsuit", e.target.value)}
-          />
-          No
-        </label>
-      </div>
-      {errors.lawsuit && <div className="error-message">{errors.lawsuit}</div>}
-    </label>
-
-    {/* Smoking Status */}
-    <label className="form-label-smoke">
-      Do you smoke? <span className="required">*</span>
-      <div className="radio-group">
-        <label>
-          <input
-            type="radio"
-            name="smoke"
-            value="Yes"
-            checked={formData.step5.backgroundInfo.smoke === "Yes"}
-            onChange={(e) => handleBackgroundChange("smoke", e.target.value)}
-          />
-          Yes
-        </label>
-        <label>
-          <input
-            type="radio"
-            name="smoke"
-            value="No"
-            checked={formData.step5.backgroundInfo.smoke === "No"}
-            onChange={(e) => handleBackgroundChange("smoke", e.target.value)}
-          />
-          No
-        </label>
-      </div>
-      {errors.smoke && <div className="error-message">{errors.smoke}</div>}
-    </label>
-
-    {/* Pet Ownership */}
-    <label className="form-label-pets">
-      Do you have any pets? <span className="required">*</span>
-      <div className="radio-group">
-        <label>
-          <input
-            type="radio"
-            name="pets"
-            value="Yes"
-            checked={formData.step5.backgroundInfo.pets === "Yes"}
-            onChange={(e) => handleBackgroundChange("pets", e.target.value)}
-          />
-          Yes
-        </label>
-        <label>
-          <input
-            type="radio"
-            name="pets"
-            value="No"
-            checked={formData.step5.backgroundInfo.pets === "No"}
-            onChange={(e) => handleBackgroundChange("pets", e.target.value)}
-          />
-          No
-        </label>
-      </div>
-      {errors.pets && <div className="error-message">{errors.pets}</div>}
-    </label>
-  </div>
-</div>
-
-
+          
+            <div className="form-content-references">
+              <h2 className="form-title-references">References & Background Information</h2>
+    
+              {/* References Section */}
+              <div className="references-section">
+                {formData.step5.references.map((reference, index) => (
+                  <div key={index} className="reference-entry">
+                    <label className="form-label-reference-name">
+                      Name <span className="required">*</span>
+                      <input
+                        type="text"
+                        value={reference.name}
+                        onChange={(e) => handleReferenceChange(index, 'name', e.target.value)}
+                        placeholder="Enter name"
+                        className="form-input-reference-name"
+                      />
+                      {errors[`reference-name-${index}`] && (
+                        <div className="error-message">{errors[`reference-name-${index}`]}</div>
+                      )}
+                    </label>
+    
+                    <label className="form-label-reference-phone">
+                      Phone <span className="required">*</span>
+                      <input
+                        type="text"
+                        value={reference.phone}
+                        onChange={(e) => handleReferenceChange(index, 'phone', e.target.value)}
+                        placeholder="Enter phone number"
+                        className="form-input-reference-phone"
+                      />
+                      {errors[`reference-phone-${index}`] && (
+                        <div className="error-message">{errors[`reference-phone-${index}`]}</div>
+                      )}
+                    </label>
+    
+                    <label className="form-label-reference-relationship">
+                      Relationship <span className="required">*</span>
+                      <input
+                        type="text"
+                        value={reference.relationship}
+                        onChange={(e) => handleReferenceChange(index, 'relationship', e.target.value)}
+                        placeholder="Enter relationship"
+                        className="form-input-reference-relationship"
+                      />
+                      {errors[`reference-relationship-${index}`] && (
+                        <div className="error-message">{errors[`reference-relationship-${index}`]}</div>
+                      )}
+                    </label>
+    
+                    {/* Remove button only if there are multiple references */}
+                    {formData.step5.references.length > 1 && (
+                      <button
+                        type="button"
+                        onClick={() => removeReference(index)}
+                        className="btn-remove-reference"
+                      >
+                        Remove
+                      </button>
+                    )}
+                  </div>
+                ))}
+                {/* Add Reference Button */}
+                <button type="button" onClick={addReference} className="btn-add-reference">
+                  Add Reference
+                </button>
+              </div>
+    
+              {/* Background Information Section */}
+              <div className="background-info">
+                {/* Late Rent Payment */}
+                <label className="form-label-late-rent">
+                  Have you ever been late or delinquent on rent? <span className="required">*</span>
+                  <div className="radio-group">
+                    <label>
+                      <input
+                        type="radio"
+                        name="lateRent"
+                        value="Yes"
+                        checked={formData.step5.backgroundInfo.lateRent === 'Yes'}
+                        onChange={(e) => handleBackgroundChange('lateRent', e.target.value)}
+                      />
+                      Yes
+                    </label>
+                    <label>
+                      <input
+                        type="radio"
+                        name="lateRent"
+                        value="No"
+                        checked={formData.step5.backgroundInfo.lateRent === 'No'}
+                        onChange={(e) => handleBackgroundChange('lateRent', e.target.value)}
+                      />
+                      No
+                    </label>
+                  </div>
+                  {errors.lateRent && <div className="error-message">{errors.lateRent}</div>}
+                </label>
+    
+                {/* Lawsuit History */}
+                <label className="form-label-lawsuit">
+                  Have you ever been party to a lawsuit? <span className="required">*</span>
+                  <div className="radio-group">
+                    <label>
+                      <input
+                        type="radio"
+                        name="lawsuit"
+                        value="Yes"
+                        checked={formData.step5.backgroundInfo.lawsuit === 'Yes'}
+                        onChange={(e) => handleBackgroundChange('lawsuit', e.target.value)}
+                      />
+                      Yes
+                    </label>
+                    <label>
+                      <input
+                        type="radio"
+                        name="lawsuit"
+                        value="No"
+                        checked={formData.step5.backgroundInfo.lawsuit === 'No'}
+                        onChange={(e) => handleBackgroundChange('lawsuit', e.target.value)}
+                      />
+                      No
+                    </label>
+                  </div>
+                  {errors.lawsuit && <div className="error-message">{errors.lawsuit}</div>}
+                </label>
+    
+                {/* Smoking Status */}
+                <label className="form-label-smoke">
+                  Do you smoke? <span className="required">*</span>
+                  <div className="radio-group">
+                    <label>
+                      <input
+                        type="radio"
+                        name="smoke"
+                        value="Yes"
+                        checked={formData.step5.backgroundInfo.smoke === 'Yes'}
+                        onChange={(e) => handleBackgroundChange('smoke', e.target.value)}
+                      />
+                      Yes
+                    </label>
+                    <label>
+                      <input
+                        type="radio"
+                        name="smoke"
+                        value="No"
+                        checked={formData.step5.backgroundInfo.smoke === 'No'}
+                        onChange={(e) => handleBackgroundChange('smoke', e.target.value)}
+                      />
+                      No
+                    </label>
+                  </div>
+                  {errors.smoke && <div className="error-message">{errors.smoke}</div>}
+                </label>
+    
+                {/* Pet Ownership */}
+                <label className="form-label-pets">
+                  Do you have any pets? <span className="required">*</span>
+                  <div className="radio-group">
+                    <label>
+                      <input
+                        type="radio"
+                        name="pets"
+                        value="Yes"
+                        checked={formData.step5.backgroundInfo.pets === 'Yes'}
+                        onChange={(e) => handleBackgroundChange('pets', e.target.value)}
+                      />
+                      Yes
+                    </label>
+                    <label>
+                      <input
+                        type="radio"
+                        name="pets"
+                        value="No"
+                        checked={formData.step5.backgroundInfo.pets === 'No'}
+                        onChange={(e) => handleBackgroundChange('pets', e.target.value)}
+                      />
+                      No
+                    </label>
+                  </div>
+                  {errors.pets && <div className="error-message">{errors.pets}</div>}
+                </label>
+              </div>
+            </div>
         );
       case 5:
         return (
           <div className="form-content-final-comments">
-            <h2 className="form-title-final-comments">Final Details & Comments</h2>
-            <label htmlFor="comments" className="form-label-comments">
-              Additional Questions
-            </label>
-            <textarea
-              id="comments"
-              name="comments"
-              placeholder="Enter any additional information"
-              value={formData.step6.comments}
-              onChange={(e) => handleCommentsChange(e.target.value)}
-              className="form-textarea-comments"
-            ></textarea>
-          </div>
+          <h2 className="form-title-final-comments">Final Details & Comments</h2>
+          
+          {/* New Question 1 */}
+          <label htmlFor="moveReason" className="form-label-comments">
+            Why are you moving from your current address?
+          </label>
+          <textarea
+            id="moveReason"
+            name="moveReason"
+            placeholder="Enter the reason for moving"
+            value={formData.step6.moveReason}
+            onChange={(e) => handleMoveReasonChange(e.target.value)}
+            className="form-textarea-comments"
+          ></textarea>
+          
+          {/* New Question 2 */}
+          <label htmlFor="creditCheckComments" className="form-label-comments">
+            Is there anything negative in your credit or background check you want to comment on?
+          </label>
+          <textarea
+            id="creditCheckComments"
+            name="creditCheckComments"
+            placeholder="Enter comments about your credit or background check"
+            value={formData.step6.creditCheckComments}
+            onChange={(e) => handleCreditCheckCommentsChange(e.target.value)}
+            className="form-textarea-comments"
+          ></textarea>
+          
+          {/* Additional Questions Section */}
+          <label htmlFor="comments" className="form-label-comments">
+            Additional Questions
+          </label>
+          <textarea
+            id="comments"
+            name="comments"
+            placeholder="Enter any additional information"
+            value={formData.step6.comments}
+            onChange={(e) => handleCommentsChange(e.target.value)}
+            className="form-textarea-comments"
+          ></textarea>
+        </div>
+        
         );
 
       default:
@@ -1257,56 +1425,54 @@ const MultiStepForm = () => {
 
       {/* Form */}
      {/* Form */}
-     <form id="tenantForm" className="form-multi-step" onSubmit={handleSubmit}>
+     <form onSubmit={handleSubmit} id="tenantForm">
   <div className="form-step-content">{renderFormContent()}</div>
 
   <div className="form-navigation-multi-step">
     {currentStep > 0 && (
       <button
         type="button"
-        className="btn-prev-multi-step"
         onClick={() => updateStep(currentStep - 1)}
+        className="btn-prev-multi-step" // Add your custom class or Tailwind CSS here
       >
         Previous
       </button>
     )}
-    {currentStep < steps.length - 1 ? (
+
+    {currentStep < steps.length - 1 && (
       <button
         type="button"
-        className="btn-next-multi-step"
         onClick={() => {
-          const validations = [validate, validateCase1, validateCase2, validateCase3, validateCase4];
-          if (validations[currentStep]()) {
+          if (validate()) {
             updateStep(currentStep + 1);
           } else {
-            alert("Please fill out all required fields correctly.");
+            alert('Please fill out all required fields correctly.');
           }
         }}
+        className="btn-next-multi-step" // Add your custom class or Tailwind CSS here
       >
         Next
       </button>
-    ) : (
+    )}
+
+    {currentStep === steps.length - 1 && (
       <button
         type="submit"
-        className="btn-submit-multi-step"
         onClick={(e) => {
-          if (currentStep === steps.length - 1) {
-            // Proceed with form submission only on last step
+          if (validate()) {
             handleSubmit(e);
           } else {
-            e.preventDefault(); // Prevent form submission until last step
+            e.preventDefault();
+            alert('Please fill out all required fields correctly.');
           }
         }}
+        className="btn-submit-multi-step" // Add your custom class or Tailwind CSS here
       >
         Submit
       </button>
     )}
   </div>
 </form>
-
-
-
-
 
     </div>
   );
