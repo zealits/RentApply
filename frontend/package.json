@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@square/web-sdk": "^2.0.1",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^16.1.0",
     "@testing-library/user-event": "^13.5.0",
@@ -16,11 +17,11 @@
     "react-redux": "^9.2.0",
     "react-router-dom": "^7.1.1",
     "react-scripts": "5.0.1",
+    "react-square-web-payments-sdk": "^3.2.1",
     "timers-browserify": "^2.0.12",
     "web-vitals": "^2.1.4",
     "xml2js": "^0.6.2"
   },
-  "proxy": "https://api.usps.com",
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
@@ -44,5 +45,6 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  }
+  },
+  "proxy": "http://192.168.137.1:1212"
 }

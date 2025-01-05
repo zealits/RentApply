@@ -1,0 +1,94 @@
+/* General Styles for the Payment Buttons */
+div {
+    margin: 20px 0;
+  }
+  
+  button {
+    padding: 10px 20px;
+    background-color: #4CAF50; /* Green background for the buttons */
+    color: white;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  button:hover {
+    background-color: #45a049;
+  }
+  
+  button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+  }
+  
+  /* Styles for the Payment Method Selection Buttons */
+  button {
+    margin-right: 10px;
+  }
+  
+  button:nth-child(1) {
+    background-color: #008CBA; /* Blue for Card */
+  }
+  
+  button:nth-child(2) {
+    background-color: #4285F4; /* Google Pay button color */
+  }
+  
+  button:nth-child(3) {
+    background-color: #1D1D1D; /* Apple Pay button color */
+  }
+  
+  button:nth-child(4) {
+    background-color: #25CC88; /* Cash App Pay button color */
+  }
+  
+  /* Google Pay & Apple Pay Button Containers */
+  #google-pay-button,
+  #apple-pay-button {
+    display: block;
+    visibility: visible;
+    margin-top: 15px;
+    padding: 20px;
+    background-color: #f1f1f1;
+    border-radius: 5px;
+    text-align: center;
+    font-size: 18px;
+  }
+  
+  #google-pay-button {
+    background-color: #4285F4; /* Google Pay button background */
+    color: white;
+  }
+  
+  #apple-pay-button {
+    background-color: #1D1D1D; /* Apple Pay button background */
+    color: white;
+  }
+  
+  /* Card Payment Form Container */
+  #card-container {
+    margin-top: 20px;
+    padding: 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+    width: 300px;
+  }
+  
+  #card-container div {
+    margin-bottom: 10px;
+  }
+  
+  /* Cash App Pay Button Container */
+  #cash-app-button {
+    background-color: #00D084; /* Cash App Pay button background */
+    color: white;
+    font-size: 16px;
+    padding: 15px;
+    border-radius: 5px;
+    text-align: center;
+    margin-top: 15px;
+  }
+  
