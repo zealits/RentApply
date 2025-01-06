@@ -21,6 +21,7 @@ const MultiStepForm = () => {
       if (!document.querySelector("#card-container div")) {
         await cardInstance.attach("#card-container");
       }
+      console.log(cardInstance);
       setCard(cardInstance); // Store the card instance in state
       isInitialized = true;
     }
@@ -29,14 +30,15 @@ const MultiStepForm = () => {
   }, []);
 
   const handlePayment = async () => {
-  
     if (!card) {
       alert("Payment form is not ready. Please try again later.");
       return;
     }
 
     const result = await card.tokenize();
- 
+
+    console.log(result);
+
     if (result.status === "OK") {
       try {
         // Send the token to your backend  http://localhost:1212/api/submit-form
@@ -552,11 +554,10 @@ const MultiStepForm = () => {
           <div className="form-content-property-info">
             <h2 className="form-title-property-info">Personal Information</h2>
 
-            {/* <div className="form-row">
+            <div className="form-row">
               <div id="card-container" />
               <div onClick={handlePayment}>Pay</div>
-            </div> */}
-
+            </div>
 
             <div className="form-row">
               {/* Personal Information Section */}

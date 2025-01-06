@@ -5,33 +5,30 @@ const path = require("path");
 const errorMiddleware = require("./middleware/error");
 const cookieParser = require("cookie-parser");
 const bodyParser = require("body-parser");
-const formRoutes = require('./routes/formRoutes');
+const formRoutes = require("./routes/formRoutes");
 const router = express.Router();
-
+const paymentRoutes = require("./routes/payment");
 
 // const connectDB = require("./config/database");
 
-
 app.use(cors()); // Allow all origins for simplicity, or configure specifically
 
+// // Import routes
 
-// Import routes
-
-// CORS configuration
+// // CORS configuration
 const corsOptions = {
   origin: "http://localhost:3000", // Allow React frontend on this port
   methods: ["GET", "POST", "PUT", "DELETE"], // Allow specific methods
   credentials: true, // Allow cookies if needed
 };
 
-
 const { submitForm } = require("./controllers/formController"); // Import controller
 
 // POST route to handle form submission and save data to MongoDB
 router.post("/submit-form", submitForm); // Use controller for form submission
-// connectDB(); 
+// connectDB();
 // Apply CORS middleware
-app.use(cors(corsOptions));
+// app.use(cors(corsOptions));
 
 // Middleware to parse JSON and cookies, and URL-encoded data
 app.use(express.json());
@@ -42,13 +39,12 @@ app.use(bodyParser.urlencoded({ extended: true }));
 // app.use('/api/users', userRoutes);
 // app.use('/api/properties', propertyRoutes);
 // app.use('/api/applications', applicationRoutes);
-app.use('/api', formRoutes); // The routes are prefixed with /api
+app.use("/api", formRoutes); // The routes are prefixed with /api
+app.use("/api/payments", paymentRoutes);
 
-app.use(cors(corsOptions));
 app.use(express.json()); // Parse JSON bodies
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: true }));
-
 
 // Serve static files (React build) for production
 app.use(express.static(path.join(__dirname, "./frontend/build")));
