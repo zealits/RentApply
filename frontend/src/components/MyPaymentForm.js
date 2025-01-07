@@ -123,7 +123,7 @@ const SquarePaymentForm = () => {
         callbacks={{
           onCashAppPayError: (error) => {
             console.error("Cash App Pay error:", error);
-            setError("Cash App Pay payment failed. Please try another method.");
+            setError("Cash App Pay payment failed. try another method.");
           },
         }}
       >
