@@ -1,30 +1,62 @@
 const express = require("express");
+const cors = require("cors");
 const app = express();
 const path = require("path");
 const errorMiddleware = require("./middleware/error");
 const cookieParser = require("cookie-parser");
 const bodyParser = require("body-parser");
-// const fileUpload = require("express-fileupload");
+const formRoutes = require("./routes/formRoutes");
+const router = express.Router();
 
+
+// const connectDB = require("./config/database");
+
+app.use(cors()); // Allow all origins for simplicity, or configure specifically
+
+// // Import routes
+
+// // CORS configuration
+const corsOptions = {
+  origin: "http://localhost:3000", // Allow React frontend on this port
+  methods: ["GET", "POST", "PUT", "DELETE"], // Allow specific methods
+  credentials: true, // Allow cookies if needed
+};
+
+const { submitForm } = require("./controllers/formController"); // Import controller
+
+// POST route to handle form submission and save data to MongoDB
+router.post("/submit-form", submitForm); // Use controller for form submission
+// connectDB();
+// Apply CORS middleware
+// app.use(cors(corsOptions));
+
+// Middleware to parse JSON and cookies, and URL-encoded data
 app.use(express.json());
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: true }));
-// app.use(fileUpload());
 
-//Route Imports
+// Use routes
+// app.use('/api/users', userRoutes);
+// app.use('/api/properties', propertyRoutes);
+// app.use('/api/applications', applicationRoutes);
+app.use("/api", formRoutes); // The routes are prefixed with /api
 
 
-// app.use("/api/z1",product);
+app.use(express.json()); // Parse JSON bodies
+app.use(cookieParser());
+app.use(bodyParser.urlencoded({ extended: true }));
 
-// app.use("/aak/l1", venue);
-
+// Serve static files (React build) for production
 app.use(express.static(path.join(__dirname, "./frontend/build")));
 
+// Catch-all route to serve React's index.html
 app.get("*", (req, res) => {
   res.sendFile(path.resolve(__dirname, "./frontend/build/index.html"));
 });
 
-// Middleware for Errors
+// Middleware for Error Handling
 app.use(errorMiddleware);
+
+// Start the server
 
 module.exports = app;
