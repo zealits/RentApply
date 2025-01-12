@@ -303,3 +303,21 @@
     }
   }
   
+
+
+  
+  footer a {
+    color: white; /* Blue color for the link */
+    text-decoration: none; /* Remove underline by default */
+    font-weight: bold; /* Make the link bold */
+  }
+  
+  footer a:hover {
+    text-decoration: underline; /* Underline on hover */
+    color: #0056b3; /* Darker blue on hover */
+  }
+  
+  footer p {
+    margin: 5px 0; /* Add some spacing between paragraphs */
+  }
+  

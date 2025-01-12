@@ -659,16 +659,26 @@ const MultiStepForm = () => {
                   type="text"
                   id="socialSecurity"
                   name="socialSecurity"
-                  placeholder="Enter SSN"
+                  placeholder="XXX-XX-XXXX"
                   className="form-input"
                   value={formData.step1.socialSecurity || ""}
-                  onChange={(e) =>
+                  maxLength={11} // Limit input length to match SSN format
+                  onChange={(e) => {
+                    let value = e.target.value.replace(/\D/g, ""); // Remove non-numeric characters
+                    if (value.length > 3 && value.length <= 5) {
+                      value = `${value.slice(0, 3)}-${value.slice(3)}`; // Add first hyphen
+                    } else if (value.length > 5) {
+                      value = `${value.slice(0, 3)}-${value.slice(3, 5)}-${value.slice(5)}`; // Add second hyphen
+                    }
+
                     setFormData((prev) => ({
                       ...prev,
-                      step1: { ...prev.step1, socialSecurity: e.target.value },
-                    }))
-                  }
+                      step1: { ...prev.step1, socialSecurity: value },
+                    }));
+                  }}
                 />
+                {formData.step1.ssnError && <span className="error-text">{formData.step1.ssnError}</span>}
+
                 {errors.socialSecurity && <span className="error-message">{errors.socialSecurity}</span>}
               </div>
 
@@ -708,13 +718,24 @@ const MultiStepForm = () => {
                   placeholder="Enter phone number"
                   className="form-input"
                   value={formData.step1.phoneNumber || ""}
-                  onChange={(e) =>
+                  maxLength={14} // Limit input length to fit the format (XXX) XXX-XXXX
+                  onChange={(e) => {
+                    let value = e.target.value.replace(/\D/g, ""); // Remove non-numeric characters
+
+                    // Format as (XXX) XXX-XXXX
+                    if (value.length > 3 && value.length <= 6) {
+                      value = `(${value.slice(0, 3)}) ${value.slice(3)}`;
+                    } else if (value.length > 6) {
+                      value = `(${value.slice(0, 3)}) ${value.slice(3, 6)}-${value.slice(6, 10)}`;
+                    }
+
                     setFormData((prev) => ({
                       ...prev,
-                      step1: { ...prev.step1, phoneNumber: e.target.value },
-                    }))
-                  }
+                      step1: { ...prev.step1, phoneNumber: value },
+                    }));
+                  }}
                 />
+
                 {errors.phoneNumber && <span className="error-message">{errors.phoneNumber}</span>}
               </div>
 
@@ -1036,8 +1057,31 @@ const MultiStepForm = () => {
                   type="tel"
                   name="ownerManagerPhone"
                   placeholder="Enter phone number"
-                  value={formData.step2.ownerManagerPhone}
-                  onChange={(e) => updateFormData("step2", e.target.name, e.target.value)}
+                  value={formData.step2.ownerManagerPhone || ""}
+                  maxLength={14} // Limit input length to fit the format (XXX) XXX-XXXX
+                  onChange={(e) => {
+                    let value = e.target.value.replace(/\D/g, ""); // Remove non-numeric characters
+
+                    // Format as (XXX) XXX-XXXX
+                    if (value.length > 3 && value.length <= 6) {
+                      value = `(${value.slice(0, 3)}) ${value.slice(3)}`;
+                    } else if (value.length > 6) {
+                      value = `(${value.slice(0, 3)}) ${value.slice(3, 6)}-${value.slice(6, 10)}`;
+                    }
+
+                    // Update formData with the formatted phone number
+                    updateFormData("step2", e.target.name, value);
+
+                    // Optional: Phone number validation (basic format check)
+                    const phonePattern = /^\(\d{3}\) \d{3}-\d{4}$/;
+                    const isValidPhone = phonePattern.test(value);
+
+                    // Set validation error if phone number doesn't match the pattern
+                    setErrors((prevErrors) => ({
+                      ...prevErrors,
+                      ownerManagerPhone: !isValidPhone ? "Invalid phone number format" : "",
+                    }));
+                  }}
                   className={`form-input ${errors.ownerManagerPhone ? "input-error" : ""}`}
                 />
                 {errors.ownerManagerPhone && <span className="error-message">{errors.ownerManagerPhone}</span>}
@@ -1093,12 +1137,35 @@ const MultiStepForm = () => {
 
                 <div className="form-row">
                   <label className="form-label">
-                    Employer Phone<span className="required">*</span>
+                    Employer Phone <span className="required">*</span>
                     <input
                       type="tel"
                       placeholder="Enter employer phone"
-                      value={employer.employerPhone}
-                      onChange={(e) => handleEmployerChange(index, "employerPhone", e.target.value)}
+                      value={employer.employerPhone || ""}
+                      maxLength={14} // Limit input length to fit the format (XXX) XXX-XXXX
+                      onChange={(e) => {
+                        let value = e.target.value.replace(/\D/g, ""); // Remove non-numeric characters
+
+                        // Format as (XXX) XXX-XXXX
+                        if (value.length > 3 && value.length <= 6) {
+                          value = `(${value.slice(0, 3)}) ${value.slice(3)}`;
+                        } else if (value.length > 6) {
+                          value = `(${value.slice(0, 3)}) ${value.slice(3, 6)}-${value.slice(6, 10)}`;
+                        }
+
+                        // Update employer phone with formatted value
+                        handleEmployerChange(index, "employerPhone", value);
+
+                        // Optional: Employer phone number validation (basic format check)
+                        const phonePattern = /^\(\d{3}\) \d{3}-\d{4}$/;
+                        const isValidPhone = phonePattern.test(value);
+
+                        // Optional: Validation error message logic
+                        if (!isValidPhone) {
+                          // Handle error message or class here if needed
+                          console.log("Invalid phone number format");
+                        }
+                      }}
                       className="form-input"
                     />
                     {errors[`employerPhone-${index}`] && (
@@ -1262,8 +1329,30 @@ const MultiStepForm = () => {
                     Phone <span className="required">*</span>
                     <input
                       type="text"
-                      value={reference.phone}
-                      onChange={(e) => handleReferenceChange(index, "phone", e.target.value)}
+                      value={reference.phone || ""}
+                      maxLength={14} // Limit input length to fit the format (XXX) XXX-XXXX
+                      onChange={(e) => {
+                        let value = e.target.value.replace(/\D/g, ""); // Remove non-numeric characters
+
+                        // Format as (XXX) XXX-XXXX
+                        if (value.length > 3 && value.length <= 6) {
+                          value = `(${value.slice(0, 3)}) ${value.slice(3)}`;
+                        } else if (value.length > 6) {
+                          value = `(${value.slice(0, 3)}) ${value.slice(3, 6)}-${value.slice(6, 10)}`;
+                        }
+
+                        // Update reference phone with formatted value
+                        handleReferenceChange(index, "phone", value);
+
+                        // Optional: Reference phone number validation (basic format check)
+                        const phonePattern = /^\(\d{3}\) \d{3}-\d{4}$/;
+                        const isValidPhone = phonePattern.test(value);
+
+                        // Optional: Handle validation error message if needed
+                        if (!isValidPhone) {
+                          console.log("Invalid phone number format");
+                        }
+                      }}
                       placeholder="Enter phone number"
                       className="form-input-reference-phone"
                     />
@@ -1461,8 +1550,6 @@ const MultiStepForm = () => {
             ></textarea>
 
             <MyPaymentForm />
-
-       
           </div>
         );
 
@@ -1540,10 +1627,12 @@ const MultiStepForm = () => {
 
 export default MultiStepForm;
 
-
-
-     {/* <div className="form-row">
+{
+  /* <div className="form-row">
               <div id="card-container" />
               <div onClick={handlePayment}>Pay</div>
-            </div> */}
-            {/* improve the page styling for payment  */}
+            </div> */
+}
+{
+  /* improve the page styling for payment  */
+}
