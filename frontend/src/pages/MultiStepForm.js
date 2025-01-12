@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "./MultiStepForm.css"; // Add your custom CSS for styling
-import { FaHome, FaUsers, FaBriefcase, FaWallet, FaAddressBook, FaCommentDots } from "react-icons/fa";
+import { FaHome, FaUsers, FaBriefcase, FaWallet, FaAddressBook, FaCommentDots, FaMoneyCheckAlt } from "react-icons/fa";
+import MyPaymentForm from "../components/MyPaymentForm.js";
 
 const MultiStepForm = () => {
   const [currentStep, setCurrentStep] = useState(0);
@@ -30,6 +31,7 @@ const MultiStepForm = () => {
   }, []);
 
   const handlePayment = async () => {
+    console.log("sdfdsf");
     if (!card) {
       alert("Payment form is not ready. Please try again later.");
       return;
@@ -37,7 +39,7 @@ const MultiStepForm = () => {
 
     const result = await card.tokenize();
 
-    console.log(result);
+    console.log("dfdf", result);
 
     if (result.status === "OK") {
       try {
@@ -538,7 +540,7 @@ const MultiStepForm = () => {
     { icon: <FaBriefcase />, title: "Employment Information" },
     { icon: <FaWallet />, title: "Financial Information" },
     { icon: <FaAddressBook />, title: "References & Background Information" },
-    { icon: <FaCommentDots />, title: "Final Details & Comments" },
+    { icon: <FaMoneyCheckAlt />, title: "Final Details & Comments" },
   ];
 
   const updateStep = (step) => {
@@ -554,10 +556,10 @@ const MultiStepForm = () => {
           <div className="form-content-property-info">
             <h2 className="form-title-property-info">Personal Information</h2>
 
-            <div className="form-row">
+            {/* <div className="form-row">
               <div id="card-container" />
               <div onClick={handlePayment}>Pay</div>
-            </div>
+            </div> */}
 
             <div className="form-row">
               {/* Personal Information Section */}
@@ -1417,7 +1419,7 @@ const MultiStepForm = () => {
       case 5:
         return (
           <div className="form-content-final-comments">
-            <h2 className="form-title-final-comments">Final Details & Comments</h2>
+            <h2 className="form-title-final-comments">Additional Info & Payment</h2>
 
             {/* New Question 1 */}
             <label htmlFor="moveReason" className="form-label-comments">
@@ -1457,6 +1459,10 @@ const MultiStepForm = () => {
               onChange={(e) => handleCommentsChange(e.target.value)}
               className="form-textarea-comments"
             ></textarea>
+
+            <MyPaymentForm />
+
+       
           </div>
         );
 
@@ -1533,3 +1539,11 @@ const MultiStepForm = () => {
 };
 
 export default MultiStepForm;
+
+
+
+     {/* <div className="form-row">
+              <div id="card-container" />
+              <div onClick={handlePayment}>Pay</div>
+            </div> */}
+            {/* improve the page styling for payment  */}
