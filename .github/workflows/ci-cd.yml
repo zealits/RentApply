@@ -53,7 +53,7 @@ jobs:
           ssh admin@dev.zealits.com << 'EOF'
             # Backup the config.env file if it exists
             if [ -f ~/RentApply/config/config.env ]; then
-              cp ~/good-gifts/config/config.env ~/config.env.bak
+              cp ~/RentApply/config/config.env ~/config.env.bak
             fi
 
             # Remove the ~/RentApply folder if it exists
