@@ -1,0 +1,41 @@
+/* Basic styles for the popup */
+.popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5); /* Semi-transparent dark overlay */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+  }
+  
+  /* Full white background and curved corners for the popup */
+  .popup-content {
+    background: white;
+    padding: 40px; /* Increased padding for better spacing */
+    border-radius: 20px; /* Larger border-radius for more pronounced curved corners */
+    text-align: center;
+    min-width: 300px; /* Increased the min-width for better look */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Optional: Add subtle shadow for more depth */
+  }
+  
+  /* Button styling inside popup */
+  .popup-content button {
+    margin-top: 20px;
+    padding: 12px 24px; /* Larger padding for better button appearance */
+    background-color: #007bff; /* Blue button background */
+    color: white;
+    border: none;
+    border-radius: 8px; /* Slightly larger rounded corners */
+    cursor: pointer;
+    font-size: 1rem; /* Font size for better readability */
+    transition: background-color 0.3s ease; /* Smooth transition on hover */
+  }
+  
+  .popup button:hover {
+    background-color: #0056b3; /* Darker shade of blue on hover */
+  }
+  

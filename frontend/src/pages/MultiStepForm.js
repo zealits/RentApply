@@ -1,11 +1,24 @@
 import React, { useState, useEffect } from "react";
 import "./MultiStepForm.css"; // Add your custom CSS for styling
-import { FaHome, FaUsers, FaBriefcase, FaWallet, FaAddressBook, FaCommentDots, FaMoneyCheckAlt } from "react-icons/fa";
+import {
+  FaHome,
+  FaUsers,
+  FaBriefcase,
+  FaWallet,
+  FaAddressBook,
+  FaCommentDots,
+  FaMoneyCheckAlt,
+} from "react-icons/fa";
 import MyPaymentForm from "../components/MyPaymentForm.js";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
+import Popup from "../components/Popup.js";
 
 const MultiStepForm = () => {
   const [currentStep, setCurrentStep] = useState(0);
   const [card, setCard] = useState(null);
+  const [isMasked, setIsMasked] = useState(true); // Define isMasked state
+  const [showPopup, setShowPopup] = useState(false);
+  const [popupMessage, setPopupMessage] = useState('');
 
   useEffect(() => {
     let isInitialized = false;
@@ -44,16 +57,19 @@ const MultiStepForm = () => {
     if (result.status === "OK") {
       try {
         // Send the token to your backend  http://localhost:1212/api/submit-form
-        const paymentResponse = await fetch("http://localhost:1212/api/payments/create-payment", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            sourceId: result.token,
-            amount: 1000, // Replace with the actual amount in cents
-          }),
-        });
+        const paymentResponse = await fetch(
+          "http://localhost:1212/api/payments/create-payment",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              sourceId: result.token,
+              amount: 1000, // Replace with the actual amount in cents
+            }),
+          }
+        );
 
         const paymentResult = await paymentResponse.json();
         if (paymentResult.error) {
@@ -81,6 +97,7 @@ const MultiStepForm = () => {
       lastName: "", // Tenant's last name
       birthDate: "", // Tenant's birth date
       socialSecurity: "", // Tenant's social security number
+      maskedSocialSecurity: "",
       emailAddress: "", // Tenant's email address
       phoneNumber: "", // Tenant's phone number
       driversLicense: "", // Tenant's driver's license number
@@ -210,7 +227,9 @@ const MultiStepForm = () => {
 
   const removeEmployer = (index) => {
     setFormData((prev) => {
-      const updatedEmployers = prev.step3.employers.filter((_, i) => i !== index);
+      const updatedEmployers = prev.step3.employers.filter(
+        (_, i) => i !== index
+      );
       return {
         ...prev,
         step3: { ...prev.step3, employers: updatedEmployers },
@@ -238,14 +257,19 @@ const MultiStepForm = () => {
       ...prev,
       step4: {
         ...prev.step4,
-        financialDetails: [...prev.step4.financialDetails, { type: "Checking Account", bank: "", balance: "" }],
+        financialDetails: [
+          ...prev.step4.financialDetails,
+          { type: "Checking Account", bank: "", balance: "" },
+        ],
       },
     }));
   };
 
   const removeFinancialDetail = (index) => {
     setFormData((prev) => {
-      const updatedDetails = prev.step4.financialDetails.filter((_, i) => i !== index);
+      const updatedDetails = prev.step4.financialDetails.filter(
+        (_, i) => i !== index
+      );
       return {
         ...prev,
         step4: { ...prev.step4, financialDetails: updatedDetails },
@@ -273,14 +297,19 @@ const MultiStepForm = () => {
       ...prev,
       step5: {
         ...prev.step5,
-        references: [...prev.step5.references, { name: "", phone: "", relationship: "" }],
+        references: [
+          ...prev.step5.references,
+          { name: "", phone: "", relationship: "" },
+        ],
       },
     }));
   };
 
   const removeReference = (index) => {
     setFormData((prev) => {
-      const updatedReferences = prev.step5.references.filter((_, i) => i !== index);
+      const updatedReferences = prev.step5.references.filter(
+        (_, i) => i !== index
+      );
       return {
         ...prev,
         step5: { ...prev.step5, references: updatedReferences },
@@ -291,7 +320,10 @@ const MultiStepForm = () => {
   const handleBackgroundChange = (field, value) => {
     setFormData((prev) => ({
       ...prev,
-      step5: { ...prev.step5, backgroundInfo: { ...prev.step5.backgroundInfo, [field]: value } },
+      step5: {
+        ...prev.step5,
+        backgroundInfo: { ...prev.step5.backgroundInfo, [field]: value },
+      },
     }));
   };
 
@@ -305,24 +337,41 @@ const MultiStepForm = () => {
     }));
   };
 
+  const handleInputChange = (e) => {
+    const input = e.target.value;
+
+    // Allow only numeric characters and limit to 9 digits
+    const sanitizedInput = input.replace(/\D/g, "").slice(0, 9);
+
+    setFormData((prev) => ({
+      ...prev,
+      step1: { ...prev.step1, socialSecurity: sanitizedInput },
+    }));
+  };
+
   const prepareFormData = () => {
     const preparedData = { ...formData };
 
     // Convert monthlyRent to a number
     if (preparedData.step2.monthlyRent) {
-      preparedData.step2.monthlyRent = parseFloat(preparedData.step2.monthlyRent);
+      preparedData.step2.monthlyRent = parseFloat(
+        preparedData.step2.monthlyRent
+      );
     }
 
     // Convert balances in financialDetails to numbers
-    preparedData.step4.financialDetails = preparedData.step4.financialDetails.map((detail) => ({
-      ...detail,
-      balance: parseFloat(detail.balance) || 0,
-    }));
+    preparedData.step4.financialDetails =
+      preparedData.step4.financialDetails.map((detail) => ({
+        ...detail,
+        balance: parseFloat(detail.balance) || 0,
+      }));
 
     return preparedData;
   };
 
-  const [errors, setErrors] = useState({});
+  const [errors, setErrors] = useState({
+    socialSecurity: "",
+  });
 
   const validate = () => {
     const newErrors = {};
@@ -338,42 +387,83 @@ const MultiStepForm = () => {
     if (!step1.state.trim()) {
       newErrors.state = "State is required.";
     }
+    const { socialSecurity } = formData.step1;
+
+    if (!socialSecurity) {
+      newErrors.socialSecurity = "Social Security Number is required.";
+    } else if (socialSecurity.length !== 9) {
+      newErrors.socialSecurity =
+        "Social Security Number must be exactly 9 digits.";
+    }
+
     if (!step1.zipCode.trim()) {
       newErrors.zipCode = "ZIP Code is required.";
     } else if (!/^\d{5}$/.test(step1.zipCode)) {
       // Validate ZIP Code format (5 digits)
       newErrors.zipCode = "Invalid ZIP Code format.";
     }
+
     // Optionally validate Street Address Abbreviation if it's provided
-    if (step1.streetAddressAbbreviation && !/^[A-Za-z\s.]+$/.test(step1.streetAddressAbbreviation)) {
-      newErrors.streetAddressAbbreviation = "Invalid Street Address Abbreviation format.";
+    if (
+      step1.streetAddressAbbreviation &&
+      !/^[A-Za-z\s.]+$/.test(step1.streetAddressAbbreviation)
+    ) {
+      newErrors.streetAddressAbbreviation =
+        "Invalid Street Address Abbreviation format.";
     }
+
     if (!step1.firstName.trim()) {
       newErrors.firstName = "First Name is required.";
     }
     if (!step1.lastName.trim()) {
       newErrors.lastName = "Last Name is required.";
     }
+
+    // Validate Birth Date (required and format: YYYY-MM-DD)
     if (!step1.birthDate.trim()) {
       newErrors.birthDate = "Birth Date is required.";
+    } else if (!/^\d{4}-\d{2}-\d{2}$/.test(step1.birthDate)) {
+      newErrors.birthDate = "Invalid Birth Date format. Use YYYY-MM-DD.";
+    } else {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0); // Remove time part for comparison
+      const enteredDate = new Date(step1.birthDate);
+
+      if (enteredDate > today) {
+        newErrors.birthDate = "Birth Date cannot be in the future.";
+      }
     }
-    if (!step1.socialSecurity.trim()) {
-      newErrors.socialSecurity = "Social Security is required.";
-    }
+
     if (!step1.emailAddress.trim()) {
       newErrors.emailAddress = "Email Address is required.";
     } else if (!/\S+@\S+\.\S+/.test(step1.emailAddress)) {
       newErrors.emailAddress = "Invalid Email Address.";
     }
+
+    // Validate Phone Number
+    const flexiblePhoneRegex =
+      /^(\+1\s?)?(\(?\d{3}\)?[\s.-]?)?\d{3}[\s.-]?\d{4}$/;
     if (!step1.phoneNumber.trim()) {
       newErrors.phoneNumber = "Phone Number is required.";
+    } else if (!flexiblePhoneRegex.test(step1.phoneNumber)) {
+      newErrors.phoneNumber =
+        "Invalid phone number. Use formats like (123) 456-7890, 123-456-7890, or +1 123 456 7890.";
     }
+
     if (!step1.driversLicense.trim()) {
       newErrors.driversLicense = "Driver's License is required.";
     }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
+  };
+
+  const getDisplayValue = () => {
+    const { socialSecurity } = formData.step1;
+    if (isMasked) {
+      return socialSecurity.replace(/./g, "*"); // Mask all digits with *
+    }
+    return socialSecurity; // Show raw value if unmasked
   };
 
   const validateCase1 = () => {
@@ -391,7 +481,8 @@ const MultiStepForm = () => {
         newErrors[`occupantDob-${index}`] = "Date of Birth is required.";
       }
       if (!occupant.relationship.trim()) {
-        newErrors[`occupantRelationship-${index}`] = "Relationship is required.";
+        newErrors[`occupantRelationship-${index}`] =
+          "Relationship is required.";
       }
     });
 
@@ -458,10 +549,12 @@ const MultiStepForm = () => {
         newErrors[`reference-name-${index}`] = "Name is required.";
       }
       if (!reference.phone.trim() || !/^\d{10}$/.test(reference.phone)) {
-        newErrors[`reference-phone-${index}`] = "Valid phone number is required (10 digits).";
+        newErrors[`reference-phone-${index}`] =
+          "Valid phone number is required (10 digits).";
       }
       if (!reference.relationship.trim()) {
-        newErrors[`reference-relationship-${index}`] = "Relationship is required.";
+        newErrors[`reference-relationship-${index}`] =
+          "Relationship is required.";
       }
     });
 
@@ -506,14 +599,21 @@ const MultiStepForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    if (!validate() || !validateCase1() || !validateCase2() || !validateCase3() || !validateCase4()) {
-      alert("Please fill out all required fields correctly.");
+  
+    if (
+      !validate() ||
+      !validateCase1() ||
+      !validateCase2() ||
+      !validateCase3() ||
+      !validateCase4()
+    ) {
+      setPopupMessage("Please fill out all required fields correctly.");
+      setShowPopup(true);
       return;
     }
-
+  
     const preparedData = { ...formData };
-
+  
     try {
       const response = await fetch("http://localhost:1212/api/submit-form", {
         method: "POST",
@@ -522,17 +622,20 @@ const MultiStepForm = () => {
         },
         body: JSON.stringify(preparedData),
       });
-
+  
       if (!response.ok) {
         throw new Error("Failed to submit form");
       }
-
+  
       const result = await response.json();
-      alert("Form submitted successfully!");
+      setPopupMessage("Form submitted successfully!");
+      setShowPopup(true); // Show success message in the popup
     } catch (error) {
-      alert("Error submitting form. Please try again.");
+      setPopupMessage("Error submitting form. Please try again.");
+      setShowPopup(true); // Show error message in the popup
     }
   };
+  
 
   const steps = [
     { icon: <FaHome />, title: "Property & Personal Information" },
@@ -581,7 +684,9 @@ const MultiStepForm = () => {
                     }))
                   }
                 />
-                {errors.firstName && <span className="error-message">{errors.firstName}</span>}
+                {errors.firstName && (
+                  <span className="error-message">{errors.firstName}</span>
+                )}
               </div>
 
               {/* Middle Name */}
@@ -624,7 +729,9 @@ const MultiStepForm = () => {
                     }))
                   }
                 />
-                {errors.lastName && <span className="error-message">{errors.lastName}</span>}
+                {errors.lastName && (
+                  <span className="error-message">{errors.lastName}</span>
+                )}
               </div>
             </div>
 
@@ -648,7 +755,9 @@ const MultiStepForm = () => {
                     }))
                   }
                 />
-                {errors.birthDate && <span className="error-message">{errors.birthDate}</span>}
+                {errors.birthDate && (
+                  <span className="error-message">{errors.birthDate}</span>
+                )}
               </div>
 
               {/* Social Security */}
@@ -656,31 +765,26 @@ const MultiStepForm = () => {
                 <label htmlFor="socialSecurity" className="form-label">
                   Social Security # <span className="required">*</span>
                 </label>
-                <input
-                  type="text"
-                  id="socialSecurity"
-                  name="socialSecurity"
-                  placeholder="XXX-XX-XXXX"
-                  className="form-input"
-                  value={formData.step1.socialSecurity || ""}
-                  maxLength={11} // Limit input length to match SSN format
-                  onChange={(e) => {
-                    let value = e.target.value.replace(/\D/g, ""); // Remove non-numeric characters
-                    if (value.length > 3 && value.length <= 5) {
-                      value = `${value.slice(0, 3)}-${value.slice(3)}`; // Add first hyphen
-                    } else if (value.length > 5) {
-                      value = `${value.slice(0, 3)}-${value.slice(3, 5)}-${value.slice(5)}`; // Add second hyphen
-                    }
-
-                    setFormData((prev) => ({
-                      ...prev,
-                      step1: { ...prev.step1, socialSecurity: value },
-                    }));
-                  }}
-                />
-                {formData.step1.ssnError && <span className="error-text">{formData.step1.ssnError}</span>}
-
-                {errors.socialSecurity && <span className="error-message">{errors.socialSecurity}</span>}
+                <div className="relative">
+                  <input
+                    type="text"
+                    id="socialSecurity"
+                    name="socialSecurity"
+                    placeholder="Enter SSN"
+                    className="form-input pr-10"
+                    maxLength={9}
+                    value={formData.step1.socialSecurity} // Raw input value
+                    onChange={handleInputChange} // Updates state
+                    style={{ WebkitTextSecurity: isMasked ? "disc" : "none" }} // Masking input
+                  />
+                  <button
+                    type="button"
+                    className="absolute right-2 top-1/2 transform -translate-y-1/2 text-blue-500"
+                    onClick={() => setIsMasked((prev) => !prev)}
+                  >
+                    {isMasked ? <FaEyeSlash /> : <FaEye />}
+                  </button>
+                </div>
               </div>
 
               {/* Email */}
@@ -702,7 +806,9 @@ const MultiStepForm = () => {
                     }))
                   }
                 />
-                {errors.emailAddress && <span className="error-message">{errors.emailAddress}</span>}
+                {errors.emailAddress && (
+                  <span className="error-message">{errors.emailAddress}</span>
+                )}
               </div>
             </div>
 
@@ -727,7 +833,10 @@ const MultiStepForm = () => {
                     if (value.length > 3 && value.length <= 6) {
                       value = `(${value.slice(0, 3)}) ${value.slice(3)}`;
                     } else if (value.length > 6) {
-                      value = `(${value.slice(0, 3)}) ${value.slice(3, 6)}-${value.slice(6, 10)}`;
+                      value = `(${value.slice(0, 3)}) ${value.slice(
+                        3,
+                        6
+                      )}-${value.slice(6, 10)}`;
                     }
 
                     setFormData((prev) => ({
@@ -737,7 +846,9 @@ const MultiStepForm = () => {
                   }}
                 />
 
-                {errors.phoneNumber && <span className="error-message">{errors.phoneNumber}</span>}
+                {errors.phoneNumber && (
+                  <span className="error-message">{errors.phoneNumber}</span>
+                )}
               </div>
 
               {/* Driver's License */}
@@ -759,7 +870,9 @@ const MultiStepForm = () => {
                     }))
                   }
                 />
-                {errors.driversLicense && <span className="error-message">{errors.driversLicense}</span>}
+                {errors.driversLicense && (
+                  <span className="error-message">{errors.driversLicense}</span>
+                )}
               </div>
             </div>
             <h2 className="form-title-property-info">Address Information</h2>
@@ -767,7 +880,8 @@ const MultiStepForm = () => {
               {/* Property Address */}
               <div className="form-group w-full sm:w-1/2 md:w-1/3">
                 <label htmlFor="propertyAddress" className="form-label">
-                  Property Address You Are Applying For <span className="required">*</span>
+                  Property Address You Are Applying For{" "}
+                  <span className="required">*</span>
                 </label>
                 <input
                   type="text"
@@ -783,14 +897,21 @@ const MultiStepForm = () => {
                     }))
                   }
                 />
-                {errors.propertyAddress && <span className="error-message">{errors.propertyAddress}</span>}
+                {errors.propertyAddress && (
+                  <span className="error-message">
+                    {errors.propertyAddress}
+                  </span>
+                )}
               </div>
             </div>
 
             <div className="form-row">
               {/* Street Address Abbreviation */}
               <div className="form-group w-full sm:w-1/2 md:w-1/3">
-                <label htmlFor="streetAddressAbbreviation" className="form-label">
+                <label
+                  htmlFor="streetAddressAbbreviation"
+                  className="form-label"
+                >
                   Street Address Abbreviation (optional)
                 </label>
                 <input
@@ -803,12 +924,17 @@ const MultiStepForm = () => {
                   onChange={(e) =>
                     setFormData((prev) => ({
                       ...prev,
-                      step1: { ...prev.step1, streetAddressAbbreviation: e.target.value },
+                      step1: {
+                        ...prev.step1,
+                        streetAddressAbbreviation: e.target.value,
+                      },
                     }))
                   }
                 />
                 {errors.streetAddressAbbreviation && (
-                  <span className="error-message">{errors.streetAddressAbbreviation}</span>
+                  <span className="error-message">
+                    {errors.streetAddressAbbreviation}
+                  </span>
                 )}
               </div>
             </div>
@@ -833,7 +959,9 @@ const MultiStepForm = () => {
                     }))
                   }
                 />
-                {errors.city && <span className="error-message">{errors.city}</span>}
+                {errors.city && (
+                  <span className="error-message">{errors.city}</span>
+                )}
               </div>
             </div>
 
@@ -857,7 +985,9 @@ const MultiStepForm = () => {
                     }))
                   }
                 />
-                {errors.state && <span className="error-message">{errors.state}</span>}
+                {errors.state && (
+                  <span className="error-message">{errors.state}</span>
+                )}
               </div>
             </div>
 
@@ -881,7 +1011,9 @@ const MultiStepForm = () => {
                     }))
                   }
                 />
-                {errors.zipCode && <span className="error-message">{errors.zipCode}</span>}
+                {errors.zipCode && (
+                  <span className="error-message">{errors.zipCode}</span>
+                )}
               </div>
             </div>
           </div>
@@ -889,7 +1021,9 @@ const MultiStepForm = () => {
       case 1:
         return (
           <div className="form-content-occupants-history">
-            <h2 className="form-title-occupants-history">Occupants & Housing History</h2>
+            <h2 className="form-title-occupants-history">
+              Occupants & Housing History
+            </h2>
 
             {/* Dynamic Occupants Section */}
             <div className="form-section-occupants">
@@ -903,11 +1037,17 @@ const MultiStepForm = () => {
                         type="text"
                         placeholder="Enter First Name"
                         value={occupant.name}
-                        onChange={(e) => handleOccupantChange(index, "name", e.target.value)}
-                        className={`form-input ${errors[`occupantName-${index}`] ? "input-error" : ""}`}
+                        onChange={(e) =>
+                          handleOccupantChange(index, "name", e.target.value)
+                        }
+                        className={`form-input ${
+                          errors[`occupantName-${index}`] ? "input-error" : ""
+                        }`}
                       />
                       {errors[`occupantName-${index}`] && (
-                        <span className="error-message">{errors[`occupantName-${index}`]}</span>
+                        <span className="error-message">
+                          {errors[`occupantName-${index}`]}
+                        </span>
                       )}
                     </label>
 
@@ -917,11 +1057,23 @@ const MultiStepForm = () => {
                         type="text"
                         placeholder="Enter Last Name"
                         value={occupant.lastName} // Ensure this is correctly linked to the state
-                        onChange={(e) => handleOccupantChange(index, "lastName", e.target.value)} // Update 'lastName' properly
-                        className={`form-input ${errors[`occupantLastName-${index}`] ? "input-error" : ""}`}
+                        onChange={(e) =>
+                          handleOccupantChange(
+                            index,
+                            "lastName",
+                            e.target.value
+                          )
+                        } // Update 'lastName' properly
+                        className={`form-input ${
+                          errors[`occupantLastName-${index}`]
+                            ? "input-error"
+                            : ""
+                        }`}
                       />
                       {errors[`occupantLastName-${index}`] && (
-                        <span className="error-message">{errors[`occupantLastName-${index}`]}</span>
+                        <span className="error-message">
+                          {errors[`occupantLastName-${index}`]}
+                        </span>
                       )}
                     </label>
 
@@ -930,33 +1082,61 @@ const MultiStepForm = () => {
                       <input
                         type="date"
                         value={occupant.dob}
-                        onChange={(e) => handleOccupantChange(index, "dob", e.target.value)}
-                        className={`form-input ${errors[`occupantDob-${index}`] ? "input-error" : ""}`}
+                        max={new Date().toISOString().split("T")[0]} // Disallows future dates
+                        onChange={(e) =>
+                          handleOccupantChange(index, "dob", e.target.value)
+                        }
+                        className={`form-input ${
+                          errors[`occupantDob-${index}`] ? "input-error" : ""
+                        }`}
                       />
                       {errors[`occupantDob-${index}`] && (
-                        <span className="error-message">{errors[`occupantDob-${index}`]}</span>
+                        <span className="error-message">
+                          {errors[`occupantDob-${index}`]}
+                        </span>
                       )}
                     </label>
+
                     <label className="form-label">
                       Relationship<span className="required">*</span>
                       <input
                         type="text"
                         placeholder="Enter relationship"
                         value={occupant.relationship}
-                        onChange={(e) => handleOccupantChange(index, "relationship", e.target.value)}
-                        className={`form-input ${errors[`occupantRelationship-${index}`] ? "input-error" : ""}`}
+                        onChange={(e) =>
+                          handleOccupantChange(
+                            index,
+                            "relationship",
+                            e.target.value
+                          )
+                        }
+                        className={`form-input ${
+                          errors[`occupantRelationship-${index}`]
+                            ? "input-error"
+                            : ""
+                        }`}
                       />
                       {errors[`occupantRelationship-${index}`] && (
-                        <span className="error-message">{errors[`occupantRelationship-${index}`]}</span>
+                        <span className="error-message">
+                          {errors[`occupantRelationship-${index}`]}
+                        </span>
                       )}
                     </label>
-                    <button type="button" onClick={() => removeOccupant(index)} className="form-remove-btn">
+                    <button
+                      type="button"
+                      onClick={() => removeOccupant(index)}
+                      className="form-remove-btn"
+                    >
                       Remove
                     </button>
                   </div>
                 </div>
               ))}
-              <button type="button" onClick={addOccupant} className="form-add-btn">
+              <button
+                type="button"
+                onClick={addOccupant}
+                className="form-add-btn"
+              >
                 Add Occupant
               </button>
             </div>
@@ -965,22 +1145,40 @@ const MultiStepForm = () => {
             <div className="form-row">
               <label className="form-label">
                 Participant in Housing Choice Voucher Program{" "}
-                <a href="https://www.usa.gov/housing-voucher-section-8" className="section8">
+                <a
+                  href="https://www.usa.gov/housing-voucher-section-8"
+                  className="section8"
+                >
                   (Section 8)
                 </a>
                 ?
                 <select
                   name="housingVoucher"
                   value={formData.step2.housingVoucher}
-                  onChange={(e) => updateFormData("step2", e.target.name, e.target.value)}
+                  onChange={(e) =>
+                    updateFormData("step2", e.target.name, e.target.value)
+                  }
                   className="form-select"
                 >
                   <option value="">Select an option</option>
-                  <option value="yes">Yes, I participate in the Housing Choice Voucher Program (Section 8).</option>
-                  <option value="no">No, I do not participate in the Housing Choice Voucher Program.</option>
-                  <option value="eligible">I am eligible but not currently participating.</option>
-                  <option value="applied">I have applied but have not received assistance yet.</option>
-                  <option value="past">I have received assistance in the past but am no longer participating.</option>
+                  <option value="yes">
+                    Yes, I participate in the Housing Choice Voucher Program
+                    (Section 8).
+                  </option>
+                  <option value="no">
+                    No, I do not participate in the Housing Choice Voucher
+                    Program.
+                  </option>
+                  <option value="eligible">
+                    I am eligible but not currently participating.
+                  </option>
+                  <option value="applied">
+                    I have applied but have not received assistance yet.
+                  </option>
+                  <option value="past">
+                    I have received assistance in the past but am no longer
+                    participating.
+                  </option>
                 </select>
               </label>
             </div>
@@ -990,36 +1188,61 @@ const MultiStepForm = () => {
               <label className="form-label">
                 Monthly Rent
                 <input
-                  type="number"
+                  type="text" // Use "text" to allow manual restrictions
                   name="monthlyRent"
                   placeholder="Enter monthly rent"
                   value={formData.step2.monthlyRent}
-                  onChange={(e) => updateFormData("step2", e.target.name, e.target.value)}
-                  className={`form-input ${errors.monthlyRent ? "input-error" : ""}`}
+                  onChange={(e) => {
+                    // Allow only digits
+                    const numericValue = e.target.value.replace(/\D/g, "");
+                    updateFormData("step2", e.target.name, numericValue);
+                  }}
+                  className={`form-input ${
+                    errors.monthlyRent ? "input-error" : ""
+                  }`}
                 />
-                {errors.monthlyRent && <span className="error-message">{errors.monthlyRent}</span>}
+                {errors.monthlyRent && (
+                  <span className="error-message">{errors.monthlyRent}</span>
+                )}
               </label>
+
               <label className="form-label">
                 Start Date of Residency
                 <input
                   type="date"
                   name="startDate"
                   value={formData.step2.startDate}
-                  onChange={(e) => updateFormData("step2", e.target.name, e.target.value)}
-                  className={`form-input ${errors.startDate ? "input-error" : ""}`}
+                  max={new Date().toISOString().split("T")[0]} // Disallows future dates
+                  onChange={(e) => {
+                    updateFormData("step2", e.target.name, e.target.value);
+                  }}
+                  className={`form-input ${
+                    errors.startDate ? "input-error" : ""
+                  }`}
                 />
-                {errors.startDate && <span className="error-message">{errors.startDate}</span>}
+                {errors.startDate && (
+                  <span className="error-message">{errors.startDate}</span>
+                )}
               </label>
+
               <label className="form-label">
                 End Date of Residency
                 <input
                   type="date"
                   name="endDate"
                   value={formData.step2.endDate}
-                  onChange={(e) => updateFormData("step2", e.target.name, e.target.value)}
-                  className={`form-input ${errors.endDate ? "input-error" : ""}`}
+                  min={formData.step2.startDate || ""} // Ensures end date is not before start date
+                  max={new Date().toISOString().split("T")[0]} // Disallows future dates
+                  onChange={(e) => {
+                    updateFormData("step2", e.target.name, e.target.value);
+                  }}
+                  className={`form-input ${
+                    errors.endDate ? "input-error" : ""
+                  }`}
                 />
-                {errors.endDate && <span className="error-message">{errors.endDate}</span>}
+                {errors.endDate && (
+                  <span className="error-message">{errors.endDate}</span>
+                )}
               </label>
             </div>
 
@@ -1031,10 +1254,18 @@ const MultiStepForm = () => {
                   name="reasonForMoving"
                   placeholder="Enter reason for moving"
                   value={formData.step2.reasonForMoving}
-                  onChange={(e) => updateFormData("step2", e.target.name, e.target.value)}
-                  className={`form-textarea ${errors.reasonForMoving ? "input-error" : ""}`}
+                  onChange={(e) =>
+                    updateFormData("step2", e.target.name, e.target.value)
+                  }
+                  className={`form-textarea ${
+                    errors.reasonForMoving ? "input-error" : ""
+                  }`}
                 ></textarea>
-                {errors.reasonForMoving && <span className="error-message">{errors.reasonForMoving}</span>}
+                {errors.reasonForMoving && (
+                  <span className="error-message">
+                    {errors.reasonForMoving}
+                  </span>
+                )}
               </label>
             </div>
 
@@ -1047,10 +1278,18 @@ const MultiStepForm = () => {
                   name="ownerManagerName"
                   placeholder="Enter owner's/manager's name"
                   value={formData.step2.ownerManagerName}
-                  onChange={(e) => updateFormData("step2", e.target.name, e.target.value)}
-                  className={`form-input ${errors.ownerManagerName ? "input-error" : ""}`}
+                  onChange={(e) =>
+                    updateFormData("step2", e.target.name, e.target.value)
+                  }
+                  className={`form-input ${
+                    errors.ownerManagerName ? "input-error" : ""
+                  }`}
                 />
-                {errors.ownerManagerName && <span className="error-message">{errors.ownerManagerName}</span>}
+                {errors.ownerManagerName && (
+                  <span className="error-message">
+                    {errors.ownerManagerName}
+                  </span>
+                )}
               </label>
               <label className="form-label">
                 Phone Number
@@ -1067,7 +1306,10 @@ const MultiStepForm = () => {
                     if (value.length > 3 && value.length <= 6) {
                       value = `(${value.slice(0, 3)}) ${value.slice(3)}`;
                     } else if (value.length > 6) {
-                      value = `(${value.slice(0, 3)}) ${value.slice(3, 6)}-${value.slice(6, 10)}`;
+                      value = `(${value.slice(0, 3)}) ${value.slice(
+                        3,
+                        6
+                      )}-${value.slice(6, 10)}`;
                     }
 
                     // Update formData with the formatted phone number
@@ -1080,12 +1322,20 @@ const MultiStepForm = () => {
                     // Set validation error if phone number doesn't match the pattern
                     setErrors((prevErrors) => ({
                       ...prevErrors,
-                      ownerManagerPhone: !isValidPhone ? "Invalid phone number format" : "",
+                      ownerManagerPhone: !isValidPhone
+                        ? "Invalid phone number format"
+                        : "",
                     }));
                   }}
-                  className={`form-input ${errors.ownerManagerPhone ? "input-error" : ""}`}
+                  className={`form-input ${
+                    errors.ownerManagerPhone ? "input-error" : ""
+                  }`}
                 />
-                {errors.ownerManagerPhone && <span className="error-message">{errors.ownerManagerPhone}</span>}
+                {errors.ownerManagerPhone && (
+                  <span className="error-message">
+                    {errors.ownerManagerPhone}
+                  </span>
+                )}
               </label>
             </div>
           </div>
@@ -1093,7 +1343,9 @@ const MultiStepForm = () => {
       case 2:
         return (
           <div className="form-content-employment-info">
-            <h2 className="form-title-employment-info">Employment Information</h2>
+            <h2 className="form-title-employment-info">
+              Employment Information
+            </h2>
             {formData.step3.employers.map((employer, index) => (
               <div key={index} className="employer-entry">
                 <div className="form-row">
@@ -1103,11 +1355,19 @@ const MultiStepForm = () => {
                       type="text"
                       placeholder="Enter employer name"
                       value={employer.employerName}
-                      onChange={(e) => handleEmployerChange(index, "employerName", e.target.value)}
+                      onChange={(e) =>
+                        handleEmployerChange(
+                          index,
+                          "employerName",
+                          e.target.value
+                        )
+                      }
                       className="form-input"
                     />
                     {errors[`employerName-${index}`] && (
-                      <span className="error">{errors[`employerName-${index}`]}</span>
+                      <span className="error">
+                        {errors[`employerName-${index}`]}
+                      </span>
                     )}
                   </label>
                   <label className="form-label">
@@ -1116,10 +1376,20 @@ const MultiStepForm = () => {
                       type="text"
                       placeholder="Enter occupation"
                       value={employer.occupation}
-                      onChange={(e) => handleEmployerChange(index, "occupation", e.target.value)}
+                      onChange={(e) =>
+                        handleEmployerChange(
+                          index,
+                          "occupation",
+                          e.target.value
+                        )
+                      }
                       className="form-input"
                     />
-                    {errors[`occupation-${index}`] && <span className="error">{errors[`occupation-${index}`]}</span>}
+                    {errors[`occupation-${index}`] && (
+                      <span className="error">
+                        {errors[`occupation-${index}`]}
+                      </span>
+                    )}
                   </label>
                   <label className="form-label">
                     Employer Address<span className="required">*</span>
@@ -1127,11 +1397,19 @@ const MultiStepForm = () => {
                       type="text"
                       placeholder="Enter employer address"
                       value={employer.employerAddress}
-                      onChange={(e) => handleEmployerChange(index, "employerAddress", e.target.value)}
+                      onChange={(e) =>
+                        handleEmployerChange(
+                          index,
+                          "employerAddress",
+                          e.target.value
+                        )
+                      }
                       className="form-input"
                     />
                     {errors[`employerAddress-${index}`] && (
-                      <span className="error">{errors[`employerAddress-${index}`]}</span>
+                      <span className="error">
+                        {errors[`employerAddress-${index}`]}
+                      </span>
                     )}
                   </label>
                 </div>
@@ -1151,7 +1429,10 @@ const MultiStepForm = () => {
                         if (value.length > 3 && value.length <= 6) {
                           value = `(${value.slice(0, 3)}) ${value.slice(3)}`;
                         } else if (value.length > 6) {
-                          value = `(${value.slice(0, 3)}) ${value.slice(3, 6)}-${value.slice(6, 10)}`;
+                          value = `(${value.slice(0, 3)}) ${value.slice(
+                            3,
+                            6
+                          )}-${value.slice(6, 10)}`;
                         }
 
                         // Update employer phone with formatted value
@@ -1170,7 +1451,9 @@ const MultiStepForm = () => {
                       className="form-input"
                     />
                     {errors[`employerPhone-${index}`] && (
-                      <span className="error">{errors[`employerPhone-${index}`]}</span>
+                      <span className="error">
+                        {errors[`employerPhone-${index}`]}
+                      </span>
                     )}
                   </label>
                   <label className="form-label">
@@ -1178,21 +1461,35 @@ const MultiStepForm = () => {
                     <input
                       type="date"
                       value={employer.startDate}
-                      onChange={(e) => handleEmployerChange(index, "startDate", e.target.value)}
+                      onChange={(e) =>
+                        handleEmployerChange(index, "startDate", e.target.value)
+                      }
                       className="form-input"
                     />
-                    {errors[`startDate-${index}`] && <span className="error">{errors[`startDate-${index}`]}</span>}
+                    {errors[`startDate-${index}`] && (
+                      <span className="error">
+                        {errors[`startDate-${index}`]}
+                      </span>
+                    )}
                   </label>
                   <label className="form-label">
                     Monthly Pay<span className="required">*</span>
                     <input
-                      type="number"
+                      type="text" // Use "text" to apply custom restrictions
                       placeholder="Enter monthly pay"
                       value={employer.monthlyPay}
-                      onChange={(e) => handleEmployerChange(index, "monthlyPay", e.target.value)}
+                      onChange={(e) => {
+                        // Allow only digits
+                        const numericValue = e.target.value.replace(/\D/g, "");
+                        handleEmployerChange(index, "monthlyPay", numericValue);
+                      }}
                       className="form-input"
                     />
-                    {errors[`monthlyPay-${index}`] && <span className="error">{errors[`monthlyPay-${index}`]}</span>}
+                    {errors[`monthlyPay-${index}`] && (
+                      <span className="error">
+                        {errors[`monthlyPay-${index}`]}
+                      </span>
+                    )}
                   </label>
                 </div>
 
@@ -1203,17 +1500,29 @@ const MultiStepForm = () => {
                       type="text"
                       placeholder="Enter supervisor's name"
                       value={employer.supervisorName}
-                      onChange={(e) => handleEmployerChange(index, "supervisorName", e.target.value)}
+                      onChange={(e) =>
+                        handleEmployerChange(
+                          index,
+                          "supervisorName",
+                          e.target.value
+                        )
+                      }
                       className="form-input"
                     />
                     {errors[`supervisorName-${index}`] && (
-                      <span className="error">{errors[`supervisorName-${index}`]}</span>
+                      <span className="error">
+                        {errors[`supervisorName-${index}`]}
+                      </span>
                     )}
                   </label>
                 </div>
 
                 {formData.step3.employers.length > 1 && (
-                  <button type="button" onClick={() => removeEmployer(index)} className="form-remove-employer-btn">
+                  <button
+                    type="button"
+                    onClick={() => removeEmployer(index)}
+                    className="form-remove-employer-btn"
+                  >
                     Remove Employer
                   </button>
                 )}
@@ -1221,7 +1530,11 @@ const MultiStepForm = () => {
               </div>
             ))}
 
-            <button type="button" onClick={addEmployer} className="form-add-employer-btn">
+            <button
+              type="button"
+              onClick={addEmployer}
+              className="form-add-employer-btn"
+            >
               Add Employer
             </button>
           </div>
@@ -1241,8 +1554,12 @@ const MultiStepForm = () => {
                     id={`type-${index}`}
                     name={`type-${index}`}
                     value={detail.type}
-                    onChange={(e) => handleDetailChange(index, "type", e.target.value)}
-                    className={`form-input ${errors[`type-${index}`] ? "input-error" : ""}`}
+                    onChange={(e) =>
+                      handleDetailChange(index, "type", e.target.value)
+                    }
+                    className={`form-input ${
+                      errors[`type-${index}`] ? "input-error" : ""
+                    }`}
                   >
                     <option value="">Select Financial Type</option>
                     <option value="Checking Account">Checking Account</option>
@@ -1251,7 +1568,11 @@ const MultiStepForm = () => {
                     <option value="Auto Loan">Auto Loan</option>
                     <option value="Additional Debt">Additional Debt</option>
                   </select>
-                  {errors[`type-${index}`] && <span className="error-message">{errors[`type-${index}`]}</span>}
+                  {errors[`type-${index}`] && (
+                    <span className="error-message">
+                      {errors[`type-${index}`]}
+                    </span>
+                  )}
                 </div>
 
                 {/* Bank/Institution */}
@@ -1265,10 +1586,18 @@ const MultiStepForm = () => {
                     name={`bank-${index}`}
                     placeholder="Enter bank/institution"
                     value={detail.bank}
-                    onChange={(e) => handleDetailChange(index, "bank", e.target.value)}
-                    className={`form-input ${errors[`bank-${index}`] ? "input-error" : ""}`}
+                    onChange={(e) =>
+                      handleDetailChange(index, "bank", e.target.value)
+                    }
+                    className={`form-input ${
+                      errors[`bank-${index}`] ? "input-error" : ""
+                    }`}
                   />
-                  {errors[`bank-${index}`] && <span className="error-message">{errors[`bank-${index}`]}</span>}
+                  {errors[`bank-${index}`] && (
+                    <span className="error-message">
+                      {errors[`bank-${index}`]}
+                    </span>
+                  )}
                 </div>
 
                 {/* Balance */}
@@ -1277,20 +1606,34 @@ const MultiStepForm = () => {
                     Balance<span className="required">*</span>
                   </label>
                   <input
-                    type="number"
+                    type="text" // Use "text" to enable custom validation logic
                     id={`balance-${index}`}
                     name={`balance-${index}`}
                     placeholder="Enter balance"
                     value={detail.balance}
-                    onChange={(e) => handleDetailChange(index, "balance", e.target.value)}
-                    className={`form-input ${errors[`balance-${index}`] ? "input-error" : ""}`}
+                    onChange={(e) => {
+                      // Allow only numeric values
+                      const numericValue = e.target.value.replace(/\D/g, "");
+                      handleDetailChange(index, "balance", numericValue);
+                    }}
+                    className={`form-input ${
+                      errors[`balance-${index}`] ? "input-error" : ""
+                    }`}
                   />
-                  {errors[`balance-${index}`] && <span className="error-message">{errors[`balance-${index}`]}</span>}
+                  {errors[`balance-${index}`] && (
+                    <span className="error-message">
+                      {errors[`balance-${index}`]}
+                    </span>
+                  )}
                 </div>
 
                 {/* Remove Button */}
                 {formData.step4.financialDetails.length > 1 && (
-                  <button type="button" onClick={() => removeFinancialDetail(index)} className="form-remove-btn">
+                  <button
+                    type="button"
+                    onClick={() => removeFinancialDetail(index)}
+                    className="form-remove-btn"
+                  >
                     Remove
                   </button>
                 )}
@@ -1298,7 +1641,11 @@ const MultiStepForm = () => {
             ))}
 
             {/* Add Financial Detail Button */}
-            <button type="button" onClick={addFinancialDetail} className="form-add-btn">
+            <button
+              type="button"
+              onClick={addFinancialDetail}
+              className="form-add-btn"
+            >
               Add Financial Detail
             </button>
           </div>
@@ -1306,7 +1653,9 @@ const MultiStepForm = () => {
       case 4:
         return (
           <div className="form-content-references">
-            <h2 className="form-title-references">References & Background Information</h2>
+            <h2 className="form-title-references">
+              References & Background Information
+            </h2>
 
             {/* References Section */}
             <div className="references-section">
@@ -1317,12 +1666,16 @@ const MultiStepForm = () => {
                     <input
                       type="text"
                       value={reference.name}
-                      onChange={(e) => handleReferenceChange(index, "name", e.target.value)}
+                      onChange={(e) =>
+                        handleReferenceChange(index, "name", e.target.value)
+                      }
                       placeholder="Enter name"
                       className="form-input-reference-name"
                     />
                     {errors[`reference-name-${index}`] && (
-                      <div className="error-message">{errors[`reference-name-${index}`]}</div>
+                      <div className="error-message">
+                        {errors[`reference-name-${index}`]}
+                      </div>
                     )}
                   </label>
 
@@ -1339,7 +1692,10 @@ const MultiStepForm = () => {
                         if (value.length > 3 && value.length <= 6) {
                           value = `(${value.slice(0, 3)}) ${value.slice(3)}`;
                         } else if (value.length > 6) {
-                          value = `(${value.slice(0, 3)}) ${value.slice(3, 6)}-${value.slice(6, 10)}`;
+                          value = `(${value.slice(0, 3)}) ${value.slice(
+                            3,
+                            6
+                          )}-${value.slice(6, 10)}`;
                         }
 
                         // Update reference phone with formatted value
@@ -1358,7 +1714,9 @@ const MultiStepForm = () => {
                       className="form-input-reference-phone"
                     />
                     {errors[`reference-phone-${index}`] && (
-                      <div className="error-message">{errors[`reference-phone-${index}`]}</div>
+                      <div className="error-message">
+                        {errors[`reference-phone-${index}`]}
+                      </div>
                     )}
                   </label>
 
@@ -1367,25 +1725,41 @@ const MultiStepForm = () => {
                     <input
                       type="text"
                       value={reference.relationship}
-                      onChange={(e) => handleReferenceChange(index, "relationship", e.target.value)}
+                      onChange={(e) =>
+                        handleReferenceChange(
+                          index,
+                          "relationship",
+                          e.target.value
+                        )
+                      }
                       placeholder="Enter relationship"
                       className="form-input-reference-relationship"
                     />
                     {errors[`reference-relationship-${index}`] && (
-                      <div className="error-message">{errors[`reference-relationship-${index}`]}</div>
+                      <div className="error-message">
+                        {errors[`reference-relationship-${index}`]}
+                      </div>
                     )}
                   </label>
 
                   {/* Remove button only if there are multiple references */}
                   {formData.step5.references.length > 1 && (
-                    <button type="button" onClick={() => removeReference(index)} className="btn-remove-reference">
+                    <button
+                      type="button"
+                      onClick={() => removeReference(index)}
+                      className="btn-remove-reference"
+                    >
                       Remove
                     </button>
                   )}
                 </div>
               ))}
               {/* Add Reference Button */}
-              <button type="button" onClick={addReference} className="btn-add-reference">
+              <button
+                type="button"
+                onClick={addReference}
+                className="btn-add-reference"
+              >
                 Add Reference
               </button>
             </div>
@@ -1394,7 +1768,8 @@ const MultiStepForm = () => {
             <div className="background-info">
               {/* Late Rent Payment */}
               <label className="form-label-late-rent">
-                Have you ever been late or delinquent on rent? <span className="required">*</span>
+                Have you ever been late or delinquent on rent?{" "}
+                <span className="required">*</span>
                 <div className="radio-group">
                   <label>
                     <input
@@ -1402,7 +1777,9 @@ const MultiStepForm = () => {
                       name="lateRent"
                       value="Yes"
                       checked={formData.step5.backgroundInfo.lateRent === "Yes"}
-                      onChange={(e) => handleBackgroundChange("lateRent", e.target.value)}
+                      onChange={(e) =>
+                        handleBackgroundChange("lateRent", e.target.value)
+                      }
                     />
                     Yes
                   </label>
@@ -1412,17 +1789,22 @@ const MultiStepForm = () => {
                       name="lateRent"
                       value="No"
                       checked={formData.step5.backgroundInfo.lateRent === "No"}
-                      onChange={(e) => handleBackgroundChange("lateRent", e.target.value)}
+                      onChange={(e) =>
+                        handleBackgroundChange("lateRent", e.target.value)
+                      }
                     />
                     No
                   </label>
                 </div>
-                {errors.lateRent && <div className="error-message">{errors.lateRent}</div>}
+                {errors.lateRent && (
+                  <div className="error-message">{errors.lateRent}</div>
+                )}
               </label>
 
               {/* Lawsuit History */}
               <label className="form-label-lawsuit">
-                Have you ever been party to a lawsuit? <span className="required">*</span>
+                Have you ever been party to a lawsuit?{" "}
+                <span className="required">*</span>
                 <div className="radio-group">
                   <label>
                     <input
@@ -1430,7 +1812,9 @@ const MultiStepForm = () => {
                       name="lawsuit"
                       value="Yes"
                       checked={formData.step5.backgroundInfo.lawsuit === "Yes"}
-                      onChange={(e) => handleBackgroundChange("lawsuit", e.target.value)}
+                      onChange={(e) =>
+                        handleBackgroundChange("lawsuit", e.target.value)
+                      }
                     />
                     Yes
                   </label>
@@ -1440,12 +1824,16 @@ const MultiStepForm = () => {
                       name="lawsuit"
                       value="No"
                       checked={formData.step5.backgroundInfo.lawsuit === "No"}
-                      onChange={(e) => handleBackgroundChange("lawsuit", e.target.value)}
+                      onChange={(e) =>
+                        handleBackgroundChange("lawsuit", e.target.value)
+                      }
                     />
                     No
                   </label>
                 </div>
-                {errors.lawsuit && <div className="error-message">{errors.lawsuit}</div>}
+                {errors.lawsuit && (
+                  <div className="error-message">{errors.lawsuit}</div>
+                )}
               </label>
 
               {/* Smoking Status */}
@@ -1458,7 +1846,9 @@ const MultiStepForm = () => {
                       name="smoke"
                       value="Yes"
                       checked={formData.step5.backgroundInfo.smoke === "Yes"}
-                      onChange={(e) => handleBackgroundChange("smoke", e.target.value)}
+                      onChange={(e) =>
+                        handleBackgroundChange("smoke", e.target.value)
+                      }
                     />
                     Yes
                   </label>
@@ -1468,12 +1858,16 @@ const MultiStepForm = () => {
                       name="smoke"
                       value="No"
                       checked={formData.step5.backgroundInfo.smoke === "No"}
-                      onChange={(e) => handleBackgroundChange("smoke", e.target.value)}
+                      onChange={(e) =>
+                        handleBackgroundChange("smoke", e.target.value)
+                      }
                     />
                     No
                   </label>
                 </div>
-                {errors.smoke && <div className="error-message">{errors.smoke}</div>}
+                {errors.smoke && (
+                  <div className="error-message">{errors.smoke}</div>
+                )}
               </label>
 
               {/* Pet Ownership */}
@@ -1486,7 +1880,9 @@ const MultiStepForm = () => {
                       name="pets"
                       value="Yes"
                       checked={formData.step5.backgroundInfo.pets === "Yes"}
-                      onChange={(e) => handleBackgroundChange("pets", e.target.value)}
+                      onChange={(e) =>
+                        handleBackgroundChange("pets", e.target.value)
+                      }
                     />
                     Yes
                   </label>
@@ -1496,12 +1892,16 @@ const MultiStepForm = () => {
                       name="pets"
                       value="No"
                       checked={formData.step5.backgroundInfo.pets === "No"}
-                      onChange={(e) => handleBackgroundChange("pets", e.target.value)}
+                      onChange={(e) =>
+                        handleBackgroundChange("pets", e.target.value)
+                      }
                     />
                     No
                   </label>
                 </div>
-                {errors.pets && <div className="error-message">{errors.pets}</div>}
+                {errors.pets && (
+                  <div className="error-message">{errors.pets}</div>
+                )}
               </label>
             </div>
           </div>
@@ -1509,7 +1909,9 @@ const MultiStepForm = () => {
       case 5:
         return (
           <div className="form-content-final-comments">
-            <h2 className="form-title-final-comments">Additional Info & Payment</h2>
+            <h2 className="form-title-final-comments">
+              Additional Info & Payment
+            </h2>
 
             {/* New Question 1 */}
             <label htmlFor="moveReason" className="form-label-comments">
@@ -1525,8 +1927,12 @@ const MultiStepForm = () => {
             ></textarea>
 
             {/* New Question 2 */}
-            <label htmlFor="creditCheckComments" className="form-label-comments">
-              Is there anything negative in your credit or background check you want to comment on?
+            <label
+              htmlFor="creditCheckComments"
+              className="form-label-comments"
+            >
+              Is there anything negative in your credit or background check you
+              want to comment on?
             </label>
             <textarea
               id="creditCheckComments"
@@ -1564,46 +1970,55 @@ const MultiStepForm = () => {
       {/* Stepper */}
       <div className="stepper-multi-step">
         {steps.map((step, index) => (
-          <div key={index} className={`step-multi-step ${index <= currentStep ? "active-step" : ""}`}>
-            <span className={`step-icon-${index}`}>{step.icon}</span> {/* Render the icon as a React component */}
+          <div
+            key={index}
+            className={`step-multi-step ${index <= currentStep ? "active-step" : ""}`}
+          >
+            <span className={`step-icon-${index}`}>{step.icon}</span>{" "}
+            {/* Render the icon as a React component */}
           </div>
         ))}
       </div>
-
-      {/* Form */}
+  
       {/* Form */}
       <form onSubmit={handleSubmit} id="tenantForm">
         <div className="form-step-content">{renderFormContent()}</div>
-
+  
         <div className="form-navigation-multi-step">
           {currentStep > 0 && (
             <button
               type="button"
               onClick={() => updateStep(currentStep - 1)}
-              className="btn-prev-multi-step" // Add your custom class or Tailwind CSS here
+              className="btn-prev-multi-step"
             >
               Previous
             </button>
           )}
-
+  
           {currentStep < steps.length - 1 && (
-            <div>
-              <button
-                type="button"
-                onClick={() => {
-                  if (validate()) {
-                    updateStep(currentStep + 1);
-                  } else {
-                    alert("Please fill out all required fields correctly.");
-                  }
-                }}
-                className="btn-next-multi-step" // Add your custom class or Tailwind CSS here
-              >
-                Next
-              </button>
-            </div>
+            <button
+              type="button"
+              className="btn-next-multi-step"
+              onClick={() => {
+                const validations = [
+                  validate,
+                  validateCase1,
+                  validateCase2,
+                  validateCase3,
+                  validateCase4,
+                ];
+                if (validations[currentStep]()) {
+                  updateStep(currentStep + 1);
+                } else {
+                  setPopupMessage("Please fill out all required fields correctly.");
+                  setShowPopup(true); // Show error message in the popup
+                }
+              }}
+            >
+              Next
+            </button>
           )}
-
+  
           {currentStep === steps.length - 1 && (
             <button
               type="submit"
@@ -1612,19 +2027,30 @@ const MultiStepForm = () => {
                   handleSubmit(e);
                 } else {
                   e.preventDefault();
-                  alert("Please fill out all required fields correctly.");
+                  setPopupMessage("Please fill out all required fields correctly.");
+                  setShowPopup(true); // Show error message in the popup
                 }
               }}
-              className="btn-submit-multi-step" // Add your custom class or Tailwind CSS here
+              className="btn-submit-multi-step"
             >
               Submit
             </button>
           )}
         </div>
       </form>
+  
+      {/* Popup Message */}
+      {showPopup && (
+        <div className="popup-overlay">
+          <div className="popup-content">
+            <p>{popupMessage}</p>
+            <button onClick={() => setShowPopup(false)}>Close</button>
+          </div>
+        </div>
+      )}
     </div>
   );
-};
+  };
 
 export default MultiStepForm;
 
