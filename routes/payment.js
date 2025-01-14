@@ -2,10 +2,13 @@ const express = require("express");
 const router = express.Router();
 const paymentsApi = require("../config/square");
 
+
+
 router.post("/create-payment", async (req, res) => {
   console.log("trigger");
   const { sourceId, amount } = req.body;
   console.log(sourceId, amount);
+
 
   try {
     const response = await paymentsApi.createPayment({
@@ -26,9 +29,12 @@ router.post("/create-payment", async (req, res) => {
     console.log("result : ", result);
 
     res.status(200).json(result);
+    
   } catch (error) {
+
     console.error("error : ", error);
     res.status(500).json({ error: error.message });
+
   }
 });
 

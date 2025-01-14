@@ -11,6 +11,7 @@ const NotificationModal = ({ message, type, onClose }) => (
   </div>
 );
 
+
 const SquarePaymentForm = ({ onClose, onPaymentSuccess, onPaymentError }) => {
   const [loading, setLoading] = useState(false);
 
@@ -31,6 +32,8 @@ const SquarePaymentForm = ({ onClose, onPaymentSuccess, onPaymentError }) => {
               amount: 60, // Replace with the actual amount in cents
             }),
           });
+
+          console.log(paymentResponse);
 
           const paymentResult = await paymentResponse.json();
           if (paymentResult.error) {
