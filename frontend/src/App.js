@@ -4,18 +4,25 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-d
 import Landing from "./components/Landing";
 import MyPaymentForm from "./components/MyPaymentForm.js";
 import MultiStepForm from "./pages/MultiStepForm";
+import Navbar from "./components/Navbar.js";
+import Footer from "./components/Footer.js";
 
 function App() {
   return (
     <div>
+      
       <Router>
+
+      <Navbar/>
         <Routes>
+       
           <Route exact path="/" element={<Landing />} />
           <Route exact path="/payment" element={<MyPaymentForm />} />
           <Route path="/multiform" element={<MultiStepForm />} />
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       </Router>
+      <Footer/>
     </div>
   );
 }
