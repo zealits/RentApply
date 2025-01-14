@@ -640,6 +640,7 @@ const MultiStepForm = () => {
                   name="birthDate"
                   className="form-input"
                   value={formData.step1.birthDate || ""}
+                  max={new Date().toISOString().split("T")[0]}
                   onChange={(e) =>
                     setFormData((prev) => ({
                       ...prev,
