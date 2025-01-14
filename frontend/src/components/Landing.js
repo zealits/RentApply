@@ -21,9 +21,7 @@ const Landing = () => {
   return (
     <div className="overflow-hidden">
       {/* Navbar Section */}
-      <nav className="navbar">
-        <div className="logo">Finney Properties, LLC</div>
-      </nav>
+   
 
       {/* Hero Section */}
       <section className="hero">
@@ -68,16 +66,6 @@ const Landing = () => {
         </div>
       </section>
 
-      {/* Footer Section */}
-      <footer>
-        <p>&copy; 2025 Finney Properties, LLC. Redefining Luxury Living.</p>
-        <p>
-          Powered by{" "}
-          <a href="https://www.agilelabs.ai" target="_blank" rel="noopener noreferrer">
-            agilelabs.ai
-          </a>
-        </p>
-      </footer>
 
       {/* Loader Overlay */}
       {loading && (
