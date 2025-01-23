@@ -1,0 +1,61 @@
+/* Preloader Style */
+.preloader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background-color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    transition: opacity 0.5s ease-in-out, visibility 0s ease-in-out;
+  }
+  
+  /* Logo */
+  .logo {
+    width: 400px;
+    height: auto;
+    position: absolute;
+    animation: fadeInOut 2s infinite;
+    transition: width 1s ease-in-out, height 2.5s ease-in-out;
+  }
+  
+  .loaded .logo {
+    animation: moveToTopLeft 2.5s ease-in-out forwards;
+    width: 60px;
+    height: 60px;
+  }
+  
+  @keyframes fadeInOut {
+    0% {
+      opacity: 0.4;
+    }
+    50% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 0.4;
+    }
+  }
+  
+  @keyframes moveToTopLeft {
+    0% {
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+    100% {
+      top: 20px;
+      left: 20px;
+      transform: translate(0, 0);
+    }
+  }
+  
+  .loaded {
+    opacity: 0;
+    visibility: hidden;
+    z-index: -1; /* Hide preloader and allow content to appear */
+  }
+  

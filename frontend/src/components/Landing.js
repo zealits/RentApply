@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom"; // Import Link for navigation
 import "./Landing.css";
+import Herovideo from "../assets/videos/hero.mp4";
 
 const Landing = () => {
   // State to manage loading
@@ -20,19 +21,20 @@ const Landing = () => {
 
   return (
     <div className="overflow-hidden">
-      {/* Navbar Section */}
-   
-
       {/* Hero Section */}
       <section className="hero">
+        {/* Hero Video Background */}
+        <video className="hero-video" autoPlay loop muted>
+          <source src={Herovideo} type="video/mp4" />
+          Your browser does not support the video tag.
+        </video>
+
         <div className="hero-content">
           <h1 className="hero-title">Elevate Your Living Experience</h1>
-          <p className="hero-description">
-            Discover exceptional properties curated for those who appreciate refined luxury and sophisticated living.
-          </p>
+          <p className="hero-description">Premium apartments and houses for rent in Cincinnati, OH</p>
           {/* Button with loading functionality */}
           <button className="cta-button" onClick={handleButtonClick} disabled={loading}>
-            {loading ? "Loading..." : "Fill the Rent Application Here"}
+            {loading ? "Loading..." : "Apply Now"}
           </button>
         </div>
         <div className="scroll-indicator"></div>
@@ -65,7 +67,6 @@ const Landing = () => {
           </div>
         </div>
       </section>
-
 
       {/* Loader Overlay */}
       {loading && (

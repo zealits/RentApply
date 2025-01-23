@@ -99,7 +99,7 @@ const submitForm = async (req, res) => {
 
 // Step 4: Prepare email options
 const emailOptions = {
-  email:'rahulgawadee@gmail.com', // Replace with recipient's email
+  email:'aniketkhillare172002@gmail.com', // Replace with recipient's email
   subject: 'Tenant Form Submission',
   html: generateEmailContent(savedData),
 };

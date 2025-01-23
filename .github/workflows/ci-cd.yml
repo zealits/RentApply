@@ -64,7 +64,7 @@ jobs:
 
             # Restore the config.env file
             if [ -f ~/config.env.bak ]; then
-              mv ~/config.env.bak ~/good-gifts/config/config.env
+              mv ~/config.env.bak ~/RentApply/config/config.env
             fi
 
             # Navigate to the directory

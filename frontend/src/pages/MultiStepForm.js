@@ -377,9 +377,9 @@ const MultiStepForm = () => {
     }
 
     // Optionally validate Street Address Abbreviation if it's provided
-    if (step1.streetAddressAbbreviation && !/^[A-Za-z\s.]+$/.test(step1.streetAddressAbbreviation)) {
-      newErrors.streetAddressAbbreviation = "Invalid Street Address Abbreviation format.";
-    }
+    // if (step1.streetAddressAbbreviation && !/^[A-Za-z\s.]+$/.test(step1.streetAddressAbbreviation)) {
+    //   newErrors.streetAddressAbbreviation = "Invalid Street Address Abbreviation format.";
+    // }
 
     if (!step1.firstName.trim()) {
       newErrors.firstName = "First Name is required.";

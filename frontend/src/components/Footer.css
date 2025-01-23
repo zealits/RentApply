@@ -1,5 +1,5 @@
 footer {
-    background: var(--gradient);
+   background: #16213e;
     color: white;
     padding: 3rem 5%;
     text-align: center;
@@ -8,14 +8,14 @@ footer {
   }
   
   footer::before {
-    content: '';
-    position: absolute;
-    top: -50px;
+    /* content: ''; */
+    /* position: absolute; */
+    /* top: -50px;
     left: 0;
-    right: 0;
+    right: 0; */
     height: 100px;
-    background: inherit;
-    transform: skewY(-1deg);
+    /* background: inherit; */
+    /* transform: skewY(-1deg); */
   }
   
   @keyframes fadeIn {
