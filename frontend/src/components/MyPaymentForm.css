@@ -46,7 +46,7 @@
   }
   
   .payment-button {
-    background-color: #4f46e5;
+    background-color: #161616;
     color: white;
     font-size: 16px;
     padding: 10px 20px;
@@ -57,7 +57,8 @@
   }
   
   .payment-button:hover {
-    background-color: #4338ca;
+    /* background-color: #4338ca; */
+    opacity: 70%;
   }
   
 
@@ -96,6 +97,11 @@
   
   .notification-content button:hover {
     background-color: #4338CA;
+  }
+
+  .payment-success-message{
+    color: #4caf50;
+    font-weight: 600;
   }
   
 

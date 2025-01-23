@@ -1,0 +1,22 @@
+
+.custom-navbar {
+    background: rgba(255, 255, 255, 0.95);
+    /* backdrop-filter: blur(10px); */
+    /* padding: 1rem 5%; */
+    /* box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1); */
+    /* position: fixed; */
+    width: 100%;
+    /* top: 0; */
+    /* z-index: 1000; */
+    /* display: flex; */
+    justify-content: space-between;
+    align-items: center;
+    text-align: center;
+  }
+  
+ 
+ 
+  .custom-logoimg {
+    align-items: center;
+    width: 200px;
+  }

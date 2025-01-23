@@ -1,6 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { CreditCard, PaymentForm } from "react-square-web-payments-sdk";
 import "./MyPaymentForm.css";
+import { createPayment } from "../services/Actions/paymentActions";
 
 const NotificationModal = ({ message, type, onClose }) => (
   <div className={`notification-modal ${type}`}>
@@ -11,40 +13,28 @@ const NotificationModal = ({ message, type, onClose }) => (
   </div>
 );
 
-
 const SquarePaymentForm = ({ onClose, onPaymentSuccess, onPaymentError }) => {
   const [loading, setLoading] = useState(false);
+  const dispatch = useDispatch();
+  const { paymentData } = useSelector((state) => state.payment);
+  const paymentStatus = paymentData?.payment?.status;
 
-  const handlePaymentComplete = async (token, buyer) => {
+  // Automatically close modal if payment is completed
+  useEffect(() => {
+    if (paymentStatus === "COMPLETED") {
+      onPaymentSuccess("Payment successful!");
+      onClose();
+    }
+  }, [paymentStatus, onPaymentSuccess, onClose]);
+
+  const handlePaymentComplete = async ({ token }) => {
     try {
       setLoading(true);
-      const result = token.token;
 
-      if (token.status === "OK") {
-        try {
-          const paymentResponse = await fetch("http://localhost:1212/api/payments/create-payment", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              sourceId: result,
-              amount: 60, // Replace with the actual amount in cents
-            }),
-          });
+      if (token) {
+        dispatch(createPayment(token, 60)); // Dispatch action with token and amount
 
-          console.log(paymentResponse);
-
-          const paymentResult = await paymentResponse.json();
-          if (paymentResult.error) {
-            onPaymentError(`Payment failed: ${paymentResult.error}`);
-          } else {
-            onPaymentSuccess("Payment successful!");
-            onClose(); // Close the payment modal after success
-          }
-        } catch (error) {
-          onPaymentError(`Error processing payment: ${error.message}`);
-        }
+        // Handle Redux state to check for completion (handled via useEffect)
       } else {
         onPaymentError("Tokenization failed!");
       }
@@ -66,8 +56,10 @@ const SquarePaymentForm = ({ onClose, onPaymentSuccess, onPaymentError }) => {
           Please complete the payment to proceed. This amount will be used for your booking.
         </p>
         <PaymentForm
-          applicationId="sandbox-sq0idb-KKtnWs0ZX9C0vGFpeL6dEQ"
-          locationId="L0TCSMSRY7SEA"
+          // applicationId="sandbox-sq0idb-KKtnWs0ZX9C0vGFpeL6dEQ"
+          applicationId="sandbox-sq0idb-Bxh90l3ICb_CDRCk8afEmg"
+          // locationId="L0TCSMSRY7SEA"
+          locationId="L4QXZG5MHKKQZ"
           cardTokenizeResponseReceived={handlePaymentComplete}
         >
           <CreditCard
@@ -92,23 +84,27 @@ const SquarePaymentForm = ({ onClose, onPaymentSuccess, onPaymentError }) => {
 const FinalDetailsForm = () => {
   const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
   const [notification, setNotification] = useState(null);
+  const { paymentData } = useSelector((state) => state.payment);
+  const paymentStatus = paymentData?.payment?.status;
 
   const openPaymentModal = () => setIsPaymentModalOpen(true);
   const closePaymentModal = () => setIsPaymentModalOpen(false);
 
   const showNotification = (message, type) => {
     setNotification({ message, type });
-  };
-
-  const closeNotification = () => {
-    setNotification(null);
+    setTimeout(() => setNotification(null), 5000);
   };
 
   return (
     <div>
-      <button type="button" className="payment-button" onClick={openPaymentModal}>
-        Proceed to Payment
-      </button>
+      {/* Hide payment button if payment is completed */}
+      {paymentStatus !== "COMPLETED" ? (
+        <button type="button" className="payment-button" onClick={openPaymentModal}>
+          Proceed to Payment
+        </button>
+      ) : (
+        <p className="payment-success-message">Payment completed successfully!</p>
+      )}
 
       {isPaymentModalOpen && (
         <SquarePaymentForm
@@ -119,7 +115,11 @@ const FinalDetailsForm = () => {
       )}
 
       {notification && (
-        <NotificationModal message={notification.message} type={notification.type} onClose={closeNotification} />
+        <NotificationModal
+          message={notification.message}
+          type={notification.type}
+          onClose={() => setNotification(null)}
+        />
       )}
     </div>
   );

@@ -4,8 +4,11 @@ import { FaHome, FaUsers, FaBriefcase, FaWallet, FaAddressBook, FaCommentDots, F
 import MyPaymentForm from "../components/MyPaymentForm.js";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import Popup from "../components/Popup.js";
+import CustomNavbar from "../components/CustomNavabar.js";
+import { useNavigate } from "react-router-dom";
 
 const MultiStepForm = () => {
+  const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState(0);
   const [card, setCard] = useState(null);
   const [isMasked, setIsMasked] = useState(true); // Define isMasked state
@@ -591,6 +594,13 @@ const MultiStepForm = () => {
       const result = await response.json();
       setPopupMessage("Form submitted successfully!");
       setShowPopup(true); // Show success message in the popup
+    
+      setTimeout(() => {
+        window.location.reload();
+        
+      }, 2000);
+      navigate("/");
+      // after redirect landing page
     } catch (error) {
       setPopupMessage("Error submitting form. Please try again.");
       setShowPopup(true); // Show error message in the popup
@@ -935,6 +945,7 @@ const MultiStepForm = () => {
                   name="zipCode"
                   placeholder="Enter ZIP code (e.g. 20500)"
                   className="form-input"
+                  maxLength="5"
                   value={formData.step1.zipCode}
                   onChange={(e) =>
                     setFormData((prev) => ({
@@ -1052,11 +1063,11 @@ const MultiStepForm = () => {
             {/* Monthly Rent */}
             <div className="form-row">
               <label className="form-label">
-                Monthly Rent
+                Monthly Rent ($)
                 <input
                   type="text" // Use "text" to allow manual restrictions
                   name="monthlyRent"
-                  placeholder="Enter monthly rent"
+                  placeholder="Enter monthly rent in $"
                   value={formData.step2.monthlyRent}
                   onChange={(e) => {
                     // Allow only digits
@@ -1261,10 +1272,10 @@ const MultiStepForm = () => {
                     {errors[`startDate-${index}`] && <span className="error">{errors[`startDate-${index}`]}</span>}
                   </label>
                   <label className="form-label">
-                    Monthly Pay<span className="required">*</span>
+                    Monthly Pay ($) <span className="required">*</span>
                     <input
                       type="text" // Use "text" to apply custom restrictions
-                      placeholder="Enter monthly pay"
+                      placeholder="Enter monthly pay in $ "
                       value={employer.monthlyPay}
                       onChange={(e) => {
                         // Allow only digits
@@ -1355,7 +1366,7 @@ const MultiStepForm = () => {
                 {/* Balance */}
                 <div className="form-group">
                   <label htmlFor={`balance-${index}`} className="form-label">
-                    Balance<span className="required">*</span>
+                    Balance ($)<span className="required">*</span>
                   </label>
                   <input
                     type="text" // Use "text" to enable custom validation logic
@@ -1647,6 +1658,7 @@ const MultiStepForm = () => {
   return (
     <div className="form-container-multi-step">
       {/* Stepper */}
+      <CustomNavbar />
       <div className="stepper-multi-step">
         {steps.map((step, index) => (
           <div key={index} className={`step-multi-step ${index <= currentStep ? "active-step" : ""}`}>

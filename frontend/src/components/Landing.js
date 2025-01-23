@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom"; // Import Link for navigation
 import "./Landing.css";
-import Herovideo from "../assets/videos/hero.mp4";
+import Herovideo from "../assets/videos/hero2.mp4";
+import Navbar from "./Navbar";
 
 const Landing = () => {
   // State to manage loading
@@ -20,7 +21,9 @@ const Landing = () => {
   };
 
   return (
+ 
     <div className="overflow-hidden">
+    <Navbar />
       {/* Hero Section */}
       <section className="hero">
         {/* Hero Video Background */}

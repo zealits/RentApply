@@ -24,7 +24,7 @@ function App() {
         <Preloader />
       ) : (
         <>
-          <Navbar />
+          {/* <Navbar /> */}
           <Routes>
             <Route exact path="/" element={<Landing />} />
             <Route exact path="/payment" element={<MyPaymentForm />} />

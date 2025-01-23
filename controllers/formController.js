@@ -8,18 +8,18 @@ const submitForm = async (req, res) => {
     // Step 1: Create a new FormData instance from the request body
     const formData = new FormData(req.body);
     console.log(formData);
-      // Step 2: Save form data to MongoDB
-  const savedData = await formData.save();
+    // Step 2: Save form data to MongoDB
+    const savedData = await formData.save();
 
-  // Step 3: Function to generate HTML content for the emailconst 
-  generateEmailContent = (data) => `
+    // Step 3: Function to generate HTML content for the emailconst
+    generateEmailContent = (data) => `
 <div style="font-family: Arial, sans-serif; max-width: 700px; margin: auto; padding: 20px; border: 1px solid #ddd; border-radius: 10px; background: #fefefe;">
 
   <header style="background: #6a11cb; color: white; text-align: center; padding: 15px; border-radius: 10px 10px 0 0;">
     <h1 style="margin: 0; font-size: 24px;">Rent Application Summary</h1>
   </header>
   
-  {/* <!-- Personal Information Section --> */}
+   <!-- Personal Information Section --> 
   <section style="padding: 20px; border-bottom: 1px solid #ddd;">
     <h2 style="color: #6a11cb; margin-bottom: 10px;">Personal Information</h2>
     <p><strong>Property Address:</strong> ${data.step1.propertyAddress}</p>
@@ -31,20 +31,41 @@ const submitForm = async (req, res) => {
     <p><strong>Driver's License:</strong> ${data.step1.driversLicense}</p>
   </section>
 
-  {/* <!-- Housing Information Section --> */}
+   <!-- Housing Information Section --> 
   <section style="padding: 20px; border-bottom: 1px solid #ddd;">
     <h2 style="color: #6a11cb; margin-bottom: 10px;">Housing Information</h2>
+     <h3 style="color: #6a11cb; margin-top: 20px;">Occupants</h3>
+  ${
+    data.step2.occupants.length > 0
+      ? data.step2.occupants
+          .map(
+            (occupant, index) => `
+          <div style="margin-bottom: 10px; padding: 10px; border: 1px solid #eee; border-radius: 8px; background: #f9f9f9;">
+            <p><strong>Occupant ${index + 1}:</strong></p>
+            <p><strong>Name:</strong> ${occupant.name}</p>
+            <p><strong>Date of Birth:</strong> ${new Date(occupant.dob).toLocaleDateString()}</p>
+            <p><strong>Relationship:</strong> ${occupant.relationship}</p>
+          </div>
+        `
+          )
+          .join("")
+      : "<p>No occupants listed.</p>"
+  }
     <p><strong>Prior Address:</strong> ${data.step2.priorAddress || "N/A"}</p>
     <p><strong>Monthly Rent:</strong> ${data.step2.monthlyRent || "N/A"}</p>
-    <p><strong>Start Date:</strong> ${data.step2.startDate ? new Date(data.step2.startDate).toLocaleDateString() : "N/A"}</p>
+    <p><strong>Start Date:</strong> ${
+      data.step2.startDate ? new Date(data.step2.startDate).toLocaleDateString() : "N/A"
+    }</p>
     <p><strong>End Date:</strong> ${data.step2.endDate ? new Date(data.step2.endDate).toLocaleDateString() : "N/A"}</p>
     <p><strong>Reason for Moving:</strong> ${data.step2.reasonForMoving || "N/A"}</p>
   </section>
 
-  {/* <!-- Employment Information Section --> */}
+  <!-- Employment Information Section --> 
   <section style="padding: 20px; border-bottom: 1px solid #ddd;">
     <h2 style="color: #6a11cb; margin-bottom: 10px;">Employment Information</h2>
-    ${data.step3.employers.map((employer, index) => `
+    ${data.step3.employers
+      .map(
+        (employer, index) => `
       <div style="margin-bottom: 10px; padding: 10px; border: 1px solid #eee; border-radius: 8px; background: #f9f9f9;">
         <p><strong>Employer ${index + 1}:</strong> ${employer.employerName}</p>
         <p><strong>Occupation:</strong> ${employer.occupation}</p>
@@ -52,43 +73,64 @@ const submitForm = async (req, res) => {
         <p><strong>Phone:</strong> ${employer.employerPhone}</p>
         <p><strong>Monthly Pay:</strong> ${employer.monthlyPay}</p>
       </div>
-    `).join("")}
+    `
+      )
+      .join("")}
   </section>
 
-  {/* <!-- Financial Details Section --> */}
+   <!-- Financial Details Section --> 
   <section style="padding: 20px; border-bottom: 1px solid #ddd;">
     <h2 style="color: #6a11cb; margin-bottom: 10px;">Financial Details</h2>
-    ${data.step4.financialDetails.map((financial, index) => `
+    ${data.step4.financialDetails
+      .map(
+        (financial, index) => `
       <div style="margin-bottom: 10px; padding: 10px; border: 1px solid #eee; border-radius: 8px; background: #f9f9f9;">
         <p><strong>Type:</strong> ${financial.type}</p>
         <p><strong>Bank:</strong> ${financial.bank}</p>
         <p><strong>Balance:</strong> ${financial.balance}</p>
       </div>
-    `).join("")}
+    `
+      )
+      .join("")}
   </section>
 
-  {/* <!-- References and Background Section --> */}
+   <!-- References and Background Section --> 
   <section style="padding: 20px; border-bottom: 1px solid #ddd;">
     <h2 style="color: #6a11cb; margin-bottom: 10px;">References and Background</h2>
-    ${data.step5.references.map((reference, index) => `
+    ${data.step5.references
+      .map(
+        (reference, index) => `
       <div style="margin-bottom: 10px; padding: 10px; border: 1px solid #eee; border-radius: 8px; background: #f9f9f9;">
         <p><strong>Reference ${index + 1}:</strong> ${reference.name}</p>
         <p><strong>Phone:</strong> ${reference.phone}</p>
         <p><strong>Relationship:</strong> ${reference.relationship}</p>
       </div>
-    `).join("")}
+    `
+      )
+      .join("")}
     <p><strong>Late Rent History:</strong> ${data.step5.backgroundInfo.lateRent}</p>
     <p><strong>Smoke:</strong> ${data.step5.backgroundInfo.smoke}</p>
     <p><strong>Pets:</strong> ${data.step5.backgroundInfo.pets}</p>
+    <p><strong>Lawsuit:</strong> ${data.step5.backgroundInfo.lawsuit}</p>
   </section>
 
-  {/* <!-- Additional Comments Section --> */}
+  <!-- Additional Comments Section --> 
   <section style="padding: 20px;">
     <h2 style="color: #6a11cb; margin-bottom: 10px;">Additional Comments</h2>
     <p>${data.step6.comments || "No additional comments provided."}</p>
   </section>
 
-  {/* <!-- Footer Section --> */}
+   <section style="padding: 20px;">
+    <h2 style="color: #6a11cb; margin-bottom: 10px;"> negative in credit or background </h2>
+    <p>${data.step6.creditCheckComments || "No additional comments provided."}</p>
+  </section>
+
+   <section style="padding: 20px;">
+    <h2 style="color: #6a11cb; margin-bottom: 10px;">Reason for moving from your current address?</h2>
+    <p>${data.step6.moveReason || "No additional comments provided."}</p>
+  </section>
+
+  <!-- Footer Section --> 
   <footer style="background: #6a11cb; color: white; text-align: center; padding: 15px; border-radius: 0 0 10px 10px;">
     <p style="font-size: 12px; margin: 0;">This is an automated email. Please do not reply.</p>
   </footer>
@@ -97,16 +139,16 @@ const submitForm = async (req, res) => {
 
 `;
 
-// Step 4: Prepare email options
-const emailOptions = {
-  email:'aniketkhillare172002@gmail.com', // Replace with recipient's email
-  subject: 'Tenant Form Submission',
-  html: generateEmailContent(savedData),
-};
+    // Step 4: Prepare email options
+    // , finneypropertiesllc@gmail.com
+    const emailOptions = {
+      email: "aniketkhillare172002@gmail.com ", // Replace with recipient's email
+      subject: "Tenant Form Submission",
+      html: generateEmailContent(savedData),
+    };
 
-// Step 5: Send email
-await sendEmail(emailOptions);
-
+    // Step 5: Send email
+    await sendEmail(emailOptions);
 
     // Step 6: Respond with success message
     res.status(201).json({
