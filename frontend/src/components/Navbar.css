@@ -13,17 +13,35 @@
     align-items: center;
   }
   
-  .logo {
-    font-size: 1.5rem;
-    font-weight: bold;
-    background: var(--gradient);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-    animation: fadeIn 1s ease-out;
-    text-decoration: none;
-  }
  
   .logoimg {
-    width: 270px;
+    width: 280px;
+    align-items: center;
+    text-align: center;
   }
+
+
+  /* Responsive design for smaller screens */
+@media (max-width: 768px) {
+  .navbar {
+    padding: 10px;
+    justify-content: center; /* Center-align for smaller screens */
+    position:absolute;
+  }
+
+  .logoimg {
+    height: 40px; /* Adjust logo size for smaller screens */
+  }
+}
+
+@media (max-width: 480px) {
+  .navbar {
+    padding: 8px;
+    position:absolute;
+  }
+
+  .logoimg {
+    height: 180px;
+    width: auto;
+  }
+}
