@@ -5,7 +5,7 @@ function Footer() {
   return (
     <div>  
     <footer>
-      <p>&copy; 2025 Finney Properties, LLC. Redefining Luxury Living.</p>
+      <p>&copy; 2025 Finney Properties, LLC. </p>
       <p>
         Powered by{" "}
         <a href="https://www.agilelabs.ai" target="_blank" rel="noopener noreferrer">

@@ -707,20 +707,7 @@ const MultiStepForm = () => {
                 <label htmlFor="birthDate" className="form-label">
                   Birth Date <span className="required">*</span>
                 </label>
-                <input
-                  type="date"
-                  id="birthDate"
-                  name="birthDate"
-                  className="form-input"
-                  value={formData.step1.birthDate || ""}
-                  max={new Date().toISOString().split("T")[0]}
-                  onChange={(e) =>
-                    setFormData((prev) => ({
-                      ...prev,
-                      step1: { ...prev.step1, birthDate: e.target.value },
-                    }))
-                  }
-                />
+                
                 {errors.birthDate && <span className="error-message">{errors.birthDate}</span>}
               </div>
 

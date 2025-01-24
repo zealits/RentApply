@@ -37,7 +37,7 @@ const Landing = () => {
           <p className="hero-description">Premium apartments and houses for rent in Cincinnati, OH</p>
           {/* Button with loading functionality */}
           <button className="cta-button" onClick={handleButtonClick} disabled={loading}>
-            {loading ? "Loading..." : "Apply Now"}
+            {loading ? "Loading..." : "Rental Application Form"}
           </button>
         </div>
         <div className="scroll-indicator"></div>
