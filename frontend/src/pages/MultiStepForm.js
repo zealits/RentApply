@@ -6,6 +6,8 @@ import { FaEye, FaEyeSlash } from "react-icons/fa";
 import Popup from "../components/Popup.js";
 import CustomNavbar from "../components/CustomNavabar.js";
 import { useNavigate } from "react-router-dom";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 const MultiStepForm = () => {
   const navigate = useNavigate();
@@ -594,10 +596,9 @@ const MultiStepForm = () => {
       const result = await response.json();
       setPopupMessage("Form submitted successfully!");
       setShowPopup(true); // Show success message in the popup
-    
+
       setTimeout(() => {
         window.location.reload();
-        
       }, 2000);
       navigate("/");
       // after redirect landing page
@@ -707,7 +708,21 @@ const MultiStepForm = () => {
                 <label htmlFor="birthDate" className="form-label">
                   Birth Date <span className="required">*</span>
                 </label>
-                
+                <input
+                  type="date"
+                  id="birthDate"
+                  name="birthDate"
+                  className="form-input"
+                  value={formData.step1.birthDate || ""}
+                  max={new Date().toISOString().split("T")[0]}
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      step1: { ...prev.step1, birthDate: e.target.value },
+                    }))
+                  }
+                />
+
                 {errors.birthDate && <span className="error-message">{errors.birthDate}</span>}
               </div>
 
