@@ -265,12 +265,12 @@ const submitForm = async (req, res) => {
 
 
 `;
-console.log("here there");
+    console.log("here there");
 
     // Step 4: Prepare email options
     // , finneypropertiesllc@gmail.com
     const emailOptions = {
-      email: ["aniketkhillare172002@gmail.com", userEmailAddress], // Replace with recipient's email
+      email: ["aniketkhillare172002@gmail.com", "finneypropertiesllc@gmail.com", userEmailAddress], // Replace with recipient's email
       subject: "Tenant Form Submission",
       html: generateEmailContent(savedData),
       attachments: [
