@@ -771,3 +771,118 @@
   justify-content: center;
   transition: color 0.3s ease;
 }
+
+
+
+
+
+
+
+/* Responsive adjustments */
+/* @media (max-width: 1200px) {
+  .stepper-multi-step {
+    width: 90%;
+    margin: 0rem 3rem;
+  }
+} */
+
+/* @media (max-width: 992px) {
+  .stepper-multi-step {
+    flex-direction: row;
+    width: 100%;
+    margin: 0rem 2rem;
+  }
+} */
+
+@media (max-width: 768px) {
+  .stepper-multi-step {
+   
+    margin: 0;
+    gap: 0.2rem;
+  }
+
+  .step-multi-step {
+    width: 20%;
+    text-align: left;
+  }
+
+  .step-multi-step {
+    flex: 1;
+    text-align: center;
+    position: relative;
+    cursor: pointer;
+    transition: color 0.3s, transform 0.3s;
+   
+  }
+
+  .step-multi-step:not(:last-child)::after {
+    content: "";
+    position: absolute;
+    top: 45%;
+    right: -50%;
+    width: 0;
+    height: 6px;
+    background: #e4e4e4;
+    transform: translateY(-50%);
+  }
+  
+  .step-multi-step.active-step {
+    color: #16213e;
+    font-weight: bold;
+  }
+  
+  .step-multi-step.active-step:not(:last-child)::after {
+    background: #16213e;
+  }
+  
+  .step-icon-0,
+  .step-icon-1,
+  .step-icon-2,
+  .step-icon-3,
+  .step-icon-4,
+  .step-icon-5 {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+   
+    display: inline-block;
+    background: #e4e4e4;
+    width: 50px;
+    height: 50px;
+    line-height: 60px;
+    border-radius: 50%;
+    transition: background 0.3s, transform 0.3s;
+  }
+  
+  .step-multi-step.active-step .step-icon-0,
+  .step-multi-step.active-step .step-icon-1,
+  .step-multi-step.active-step .step-icon-2,
+  .step-multi-step.active-step .step-icon-3,
+  .step-multi-step.active-step .step-icon-4,
+  .step-multi-step.active-step .step-icon-5 {
+    background: #16213e;
+    color: #ffffff;
+    transform: scale(1.1);
+  }
+}
+
+/* @media (max-width: 576px) {
+  .stepper-multi-step {
+    width: 100%;
+    margin: 0 1rem;
+  }
+
+  .step-multi-step {
+    font-size: 0.9rem;
+    padding: 0.5rem 0;
+  }
+} */
+
+
+
+/* Hover effects for larger screens */
+/* @media (min-width: 768px) {
+  .step-multi-step:hover {
+    color: #007bff;
+    transform: scale(1.1);
+  }
+} */
