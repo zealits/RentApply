@@ -1,6 +1,9 @@
 // Import required modules
 const FormData = require("../models/Form");
 const sendEmail = require("../utils/sendEmail");
+const XLSX = require("xlsx");
+const path = require("path");
+const fs = require("fs");
 
 // Function to handle form submission
 const submitForm = async (req, res) => {
@@ -10,6 +13,130 @@ const submitForm = async (req, res) => {
     console.log(formData);
     // Step 2: Save form data to MongoDB
     const savedData = await formData.save();
+
+    let userEmailAddress;
+
+    // Step 3: Generate Excel File
+    const generateExcel = (data) => {
+      // Create a workbook and worksheets for different sections
+      const wb = XLSX.utils.book_new();
+
+      userEmailAddress = data.step1.emailAddress;
+      // Personal Information Worksheet
+      const personalInfoSheet = XLSX.utils.json_to_sheet([
+        {
+          "Property Address": data.step1.propertyAddress,
+          "First Name": data.step1.firstName,
+          "Middle Name": data.step1.middleName || "",
+          "Last Name": data.step1.lastName,
+          "Date of Birth": data.step1.birthDate,
+          "Social Security": data.step1.socialSecurity,
+          Email: data.step1.emailAddress,
+          Phone: data.step1.phoneNumber,
+          "Driver's License": data.step1.driversLicense,
+        },
+      ]);
+      XLSX.utils.book_append_sheet(wb, personalInfoSheet, "Personal Information");
+
+      // Occupants Worksheet
+      if (data.step2.occupants && data.step2.occupants.length > 0) {
+        const occupantsSheet = XLSX.utils.json_to_sheet(
+          data.step2.occupants.map((occupant, index) => ({
+            "Occupant Number": index + 1,
+            Name: occupant.name,
+            "Date of Birth": occupant.dob,
+            Relationship: occupant.relationship,
+          }))
+        );
+        XLSX.utils.book_append_sheet(wb, occupantsSheet, "Occupants");
+      }
+
+      // Housing Information Worksheet
+      const housingInfoSheet = XLSX.utils.json_to_sheet([
+        {
+          "Prior Address": data.step2.priorAddress || "N/A",
+          "Monthly Rent": data.step2.monthlyRent || "N/A",
+          "Start Date": data.step2.startDate,
+          "End Date": data.step2.endDate,
+          "Reason for Moving": data.step2.reasonForMoving || "N/A",
+        },
+      ]);
+      XLSX.utils.book_append_sheet(wb, housingInfoSheet, "Housing Information");
+
+      // Employment Information Worksheet
+      if (data.step3.employers && data.step3.employers.length > 0) {
+        const employersSheet = XLSX.utils.json_to_sheet(
+          data.step3.employers.map((employer, index) => ({
+            "Employer Number": index + 1,
+            "Employer Name": employer.employerName,
+            Occupation: employer.occupation,
+            Address: employer.employerAddress,
+            Phone: employer.employerPhone,
+            "Monthly Pay": employer.monthlyPay,
+          }))
+        );
+        XLSX.utils.book_append_sheet(wb, employersSheet, "Employment Information");
+      }
+
+      // Financial Details Worksheet
+      if (data.step4.financialDetails && data.step4.financialDetails.length > 0) {
+        const financialSheet = XLSX.utils.json_to_sheet(
+          data.step4.financialDetails.map((financial, index) => ({
+            "Financial Detail Number": index + 1,
+            Type: financial.type,
+            Bank: financial.bank,
+            Balance: financial.balance,
+          }))
+        );
+        XLSX.utils.book_append_sheet(wb, financialSheet, "Financial Details");
+      }
+
+      // References Worksheet
+      if (data.step5.references && data.step5.references.length > 0) {
+        const referencesSheet = XLSX.utils.json_to_sheet(
+          data.step5.references.map((reference, index) => ({
+            "Reference Number": index + 1,
+            Name: reference.name,
+            Phone: reference.phone,
+            Relationship: reference.relationship,
+          }))
+        );
+        XLSX.utils.book_append_sheet(wb, referencesSheet, "References");
+      }
+
+      // Background Information Worksheet
+      const backgroundSheet = XLSX.utils.json_to_sheet([
+        {
+          "Late Rent History": data.step5.backgroundInfo.lateRent,
+          Smoke: data.step5.backgroundInfo.smoke,
+          Pets: data.step5.backgroundInfo.pets,
+          Lawsuit: data.step5.backgroundInfo.lawsuit,
+        },
+      ]);
+      XLSX.utils.book_append_sheet(wb, backgroundSheet, "Background Information");
+
+      // Additional Comments Worksheet
+      const commentsSheet = XLSX.utils.json_to_sheet([
+        {
+          "Additional Comments": data.step6.comments || "No additional comments",
+          "Credit Check Comments": data.step6.creditCheckComments || "No additional comments",
+          "Move Reason": data.step6.moveReason || "No additional comments",
+        },
+      ]);
+      XLSX.utils.book_append_sheet(wb, commentsSheet, "Additional Comments");
+
+      // Generate Excel file
+      const excelBuffer = XLSX.write(wb, { bookType: "xlsx", type: "buffer" });
+
+      // Save file temporarily
+      const filePath = path.join(__dirname, "tenant_application.xlsx");
+      fs.writeFileSync(filePath, excelBuffer);
+
+      return filePath;
+    };
+
+    // Generate Excel file
+    const excelFilePath = generateExcel(savedData);
 
     // Step 3: Function to generate HTML content for the emailconst
     generateEmailContent = (data) => `
@@ -138,17 +265,27 @@ const submitForm = async (req, res) => {
 
 
 `;
+console.log("here there");
 
     // Step 4: Prepare email options
     // , finneypropertiesllc@gmail.com
     const emailOptions = {
-      email: "aniketkhillare172002@gmail.com ", // Replace with recipient's email
+      email: ["aniketkhillare172002@gmail.com", userEmailAddress], // Replace with recipient's email
       subject: "Tenant Form Submission",
       html: generateEmailContent(savedData),
+      attachments: [
+        {
+          filename: "tenant_application.xlsx",
+          path: excelFilePath,
+        },
+      ],
     };
 
     // Step 5: Send email
     await sendEmail(emailOptions);
+
+    // Step 6: Clean up temporary file
+    fs.unlinkSync(excelFilePath);
 
     // Step 6: Respond with success message
     res.status(201).json({

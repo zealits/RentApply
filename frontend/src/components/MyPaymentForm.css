@@ -99,10 +99,23 @@
     background-color: #4338CA;
   }
 
-  .payment-success-message{
-    color: #4caf50;
-    font-weight: 600;
-  }
-  
+ 
 
-  
+  .payment-success-message {
+    font-size: 18px;
+    color: #28a745; /* Green color for success message */
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.payment-receipt-link {
+    font-size: 16px;
+    color: #007bff; /* Blue color for links */
+    text-decoration: none; /* Remove underline */
+    transition: color 0.3s ease-in-out;
+}
+
+.payment-receipt-link:hover {
+    color: #0056b3; /* Darker blue on hover */
+    text-decoration: underline;
+}

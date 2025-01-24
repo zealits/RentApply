@@ -1,11 +1,9 @@
 const nodeMailer = require("nodemailer");
 
-
-//SMTP is simple mail transfer protocol jeczaonjrnquodrg owhkaiirlpagvpfo jifmtmhfmfnsvpgr  lfvicuglworgwugn 
+//SMTP is simple mail transfer protocol jeczaonjrnquodrg owhkaiirlpagvpfo jifmtmhfmfnsvpgr  lfvicuglworgwugn
 
 const sendEmail = async (options) => {
   const transporter = nodeMailer.createTransport({
-
     host: process.env.SMPT_HOST,
     port: process.env.SMPT_PORT,
     service: process.env.SMPT_SERVICE,
@@ -21,6 +19,7 @@ const sendEmail = async (options) => {
     subject: options.subject,
     text: options.message,
     html: options.html,
+    attachments: options.attachments || [], // Add support for attachments
   };
 
   await transporter.sendMail(mailOptions);

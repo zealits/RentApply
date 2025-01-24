@@ -597,11 +597,11 @@ const MultiStepForm = () => {
       setPopupMessage("Form submitted successfully!");
       setShowPopup(true); // Show success message in the popup
 
-      setTimeout(() => {
-        window.location.reload();
-      }, 2000);
-      navigate("/");
-      // after redirect landing page
+      // setTimeout(() => {
+      //   window.location.reload();
+      // }, 2000);
+      // navigate("/");
+   
     } catch (error) {
       setPopupMessage("Error submitting form. Please try again.");
       setShowPopup(true); // Show error message in the popup

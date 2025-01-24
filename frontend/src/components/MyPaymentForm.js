@@ -18,6 +18,7 @@ const SquarePaymentForm = ({ onClose, onPaymentSuccess, onPaymentError }) => {
   const dispatch = useDispatch();
   const { paymentData } = useSelector((state) => state.payment);
   const paymentStatus = paymentData?.payment?.status;
+  const paymentReceiptUrl = paymentData?.payment?.receiptUrl;
 
   // Automatically close modal if payment is completed
   useEffect(() => {
@@ -86,6 +87,7 @@ const FinalDetailsForm = () => {
   const [notification, setNotification] = useState(null);
   const { paymentData } = useSelector((state) => state.payment);
   const paymentStatus = paymentData?.payment?.status;
+  const paymentReceiptUrl = paymentData?.payment?.receiptUrl;
 
   const openPaymentModal = () => setIsPaymentModalOpen(true);
   const closePaymentModal = () => setIsPaymentModalOpen(false);
@@ -102,8 +104,17 @@ const FinalDetailsForm = () => {
         <button type="button" className="payment-button" onClick={openPaymentModal}>
           Proceed to Payment
         </button>
-      ) : (
-        <p className="payment-success-message">Payment completed successfully!</p>
+      ) : (<div>
+        <p className="payment-success-message">Payment completed successfully!</p> 
+        <a 
+        className="payment-receipt-link" 
+        href={paymentReceiptUrl} 
+        target="_blank" 
+        rel="noopener noreferrer"
+    >
+        View Payment Receipt
+    </a> 
+        </div>
       )}
 
       {isPaymentModalOpen && (
