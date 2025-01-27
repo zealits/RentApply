@@ -60,7 +60,8 @@ const SquarePaymentForm = ({ onClose, onPaymentSuccess, onPaymentError }) => {
         </p>
         <PaymentForm
           // applicationId="sandbox-sq0idb-KKtnWs0ZX9C0vGFpeL6dEQ"
-          applicationId="sandbox-sq0idb-Bxh90l3ICb_CDRCk8afEmg"
+          // applicationId="sandbox-sq0idb-Bxh90l3ICb_CDRCk8afEmg"
+          applicationId="sq0idp-GtV2bseJGu7vISGpUwTWtg"
           // locationId="L0TCSMSRY7SEA"
           locationId="L4QXZG5MHKKQZ"
           cardTokenizeResponseReceived={handlePaymentComplete}
