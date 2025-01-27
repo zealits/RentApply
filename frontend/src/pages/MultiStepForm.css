@@ -248,6 +248,7 @@
   }
   
   .form-remove-btn {
+    margin-top: 23px;
     background-color: #dc3545;
   }
   
@@ -487,6 +488,7 @@
 
 .btn-remove-reference {
   padding: 0.5rem 1rem;
+  margin-top: 30px;
   font-size: 0.875rem;
   background-color: #dc3545;
   color: #fff;
@@ -689,7 +691,7 @@
   .btn-prev-multi-step:hover,
   .btn-next-multi-step:hover,
   .btn-submit-multi-step:hover {
-    background-color: #0056b3;
+    background-color: #080808;
   }
   
   .btn-prev-multi-step:disabled,

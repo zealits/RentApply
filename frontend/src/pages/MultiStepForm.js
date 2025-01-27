@@ -1311,7 +1311,7 @@ const MultiStepForm = () => {
                     Remove Employer
                   </button>
                 )}
-                <hr />
+            
               </div>
             ))}
 

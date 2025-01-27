@@ -87,7 +87,7 @@
   }
   
   .notification-content button {
-    background-color: #4F46E5;
+    background-color: black;
     color: white;
     border: none;
     padding: 8px 16px;
@@ -96,7 +96,7 @@
   }
   
   .notification-content button:hover {
-    background-color: #4338CA;
+    background-color: #080808;
   }
 
  
@@ -119,3 +119,12 @@
     color: #0056b3; /* Darker blue on hover */
     text-decoration: underline;
 }
+
+.payment-transaction-id {
+  font-size: 16px;
+  color: #6c757d; /* Muted grey for subtle appearance */
+  font-weight: 600;
+  margin-bottom: 10px;
+  font-family: Arial, sans-serif;
+}
+

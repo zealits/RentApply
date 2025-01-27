@@ -1,15 +1,19 @@
 import React from "react";
 import OwlCarousel from "react-owl-carousel3";
+import img1 from "../assets/images/finney/1.png";
+import img2 from "../assets/images/finney/2.png";
+import img3 from "../assets/images/finney/3.png";
+import img4 from "../assets/images/finney/4.png";
+import img5 from "../assets/images/finney/5.png";
+import img6 from "../assets/images/finney/6.png";
+import img7 from "../assets/images/finney/7.png";
+import img8 from "../assets/images/finney/8.png";
+import img9 from "../assets/images/finney/9.png";
+import img10 from "../assets/images/finney/10.png";
 
 import "./AboutUs.css";
 
-const pastWorkImages = [
-  "https://cdn.houseplansservices.com/content/driar5vsn9j6vdvam33js5o8bo/w991x660.jpg?v=2",
-  "https://www.cincinnati.com/gcdn/presto/2021/05/20/PCIN/3613dfe2-9705-45f2-9e6e-ed064804d3d4-Northside_duplex.jpeg?width=660&height=442&fit=crop&format=pjpg&auto=webp",
-  "https://cincinnatirefined.com/resources/media2/16x9/full/1050/center/80/771191f7-3e38-42ae-94c1-62de1d0c8d49-large16x9_9200CunninghamRdExterior3.jpg?1471273131776",
-  "https://ssl.cdn-redfin.com/photo/158/islphoto/931/genIslnoResize.1828931_0.jpg",
-  "https://images.squarespace-cdn.com/content/v1/5a4ff0f4aeb625d6f843c289/1515985897815-MMCN0Z0LGCFXUXQ77ZSG/_MG_7917.jpg",
-];
+const pastWorkImages = [img1, img2, img3, , img4, img5, img6, img7, img8, img9, img10];
 
 const AboutUs = () => {
   const options = {
@@ -22,8 +26,8 @@ const AboutUs = () => {
     dots: false,
     responsive: {
       0: { items: 1 },
-    //   600: { items: 2 },
-    //   1000: { items: 3 },
+      //   600: { items: 2 },
+      //   1000: { items: 3 },
     },
   };
   return (
@@ -44,8 +48,9 @@ const AboutUs = () => {
                 Please contact us directly to inquire about our current property listings:
               </p>
               <div className="contact-details">
-                <p className="font-medium">📞 Phone: (XXX) XXX-XXXX</p>
-                <p className="font-medium">✉️ Email: info@finneyproperties.com</p>
+                <p className="font-medium">📞 Phone: (513) 720-6283</p>
+                <p className="font-medium">✉️ Email: finneypropertiesllc@gmail.com</p>
+                <p className="font-medium">📬 PO Box 9422, Cincinnati, OH 45209</p>
               </div>
             </div>
           </div>

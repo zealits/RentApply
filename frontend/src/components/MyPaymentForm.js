@@ -18,15 +18,17 @@ const SquarePaymentForm = ({ onClose, onPaymentSuccess, onPaymentError }) => {
   const dispatch = useDispatch();
   const { paymentData } = useSelector((state) => state.payment);
   const paymentStatus = paymentData?.payment?.status;
+
   const paymentReceiptUrl = paymentData?.payment?.receiptUrl;
+  const TransactionId = paymentData?.payment?.id;
 
   // Automatically close modal if payment is completed
   useEffect(() => {
     if (paymentStatus === "COMPLETED") {
-      onPaymentSuccess("Payment successful!");
+      onPaymentSuccess(`Payment successful! Transaction ID: ${TransactionId}`);
       onClose();
     }
-  }, [paymentStatus, onPaymentSuccess, onClose]);
+  }, [paymentStatus, onPaymentSuccess, onClose, TransactionId]);
 
   const handlePaymentComplete = async ({ token }) => {
     try {
@@ -67,11 +69,11 @@ const SquarePaymentForm = ({ onClose, onPaymentSuccess, onPaymentError }) => {
             buttonProps={{
               isLoading: loading,
               css: {
-                backgroundColor: "#4F46E5",
+                backgroundColor: "#000",
                 fontSize: "16px",
                 color: "#ffffff",
                 "&:hover": {
-                  backgroundColor: "#4338CA",
+                  backgroundColor: "#080808",
                 },
               },
             }}
@@ -88,6 +90,8 @@ const FinalDetailsForm = () => {
   const { paymentData } = useSelector((state) => state.payment);
   const paymentStatus = paymentData?.payment?.status;
   const paymentReceiptUrl = paymentData?.payment?.receiptUrl;
+  const paymentId = paymentData?.payment?.id;
+  console.log(paymentId);
 
   const openPaymentModal = () => setIsPaymentModalOpen(true);
   const closePaymentModal = () => setIsPaymentModalOpen(false);
@@ -104,16 +108,13 @@ const FinalDetailsForm = () => {
         <button type="button" className="payment-button" onClick={openPaymentModal}>
           Proceed to Payment
         </button>
-      ) : (<div>
-        <p className="payment-success-message">Payment completed successfully!</p> 
-        <a 
-        className="payment-receipt-link" 
-        href={paymentReceiptUrl} 
-        target="_blank" 
-        rel="noopener noreferrer"
-    >
-        View Payment Receipt
-    </a> 
+      ) : (
+        <div>
+          <p className="payment-success-message">Payment completed successfully!</p>
+          <p className="payment-transaction-id">Transaction Id : {paymentId}</p>
+          <a className="payment-receipt-link" href={paymentReceiptUrl} target="_blank" rel="noopener noreferrer">
+            View Payment Receipt
+          </a>
         </div>
       )}
 
