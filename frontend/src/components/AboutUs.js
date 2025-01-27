@@ -13,7 +13,7 @@ import img10 from "../assets/images/finney/10.png";
 
 import "./AboutUs.css";
 
-const pastWorkImages = [img1, img2, img3, , img4, img5, img6, img7, img8, img9, img10];
+const pastWorkImages = [img1, img2, img3 , img4, img5, img6, img7, img8, img9, img10];
 
 const AboutUs = () => {
   const options = {
