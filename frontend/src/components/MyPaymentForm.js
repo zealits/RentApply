@@ -33,6 +33,7 @@ const SquarePaymentForm = ({ onClose, onPaymentSuccess, onPaymentError }) => {
   const handlePaymentComplete = async ({ token }) => {
     try {
       setLoading(true);
+      console.log("aniket");
 
       if (token) {
         dispatch(createPayment(token, 60)); // Dispatch action with token and amount
@@ -59,11 +60,8 @@ const SquarePaymentForm = ({ onClose, onPaymentSuccess, onPaymentError }) => {
           Please complete the payment to proceed. This amount will be used for your booking.
         </p>
         <PaymentForm
-          // applicationId="sandbox-sq0idb-KKtnWs0ZX9C0vGFpeL6dEQ"
-          // applicationId="sandbox-sq0idb-Bxh90l3ICb_CDRCk8afEmg"
           applicationId="sq0idp-GtV2bseJGu7vISGpUwTWtg"
-          // locationId="L0TCSMSRY7SEA"
-          locationId="L4QXZG5MHKKQZ"
+          locationId="LK27SNYH75P0Q"
           cardTokenizeResponseReceived={handlePaymentComplete}
         >
           <CreditCard
