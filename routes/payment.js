@@ -2,20 +2,17 @@ const express = require("express");
 const router = express.Router();
 const paymentsApi = require("../config/square");
 
-
-
 router.post("/create-payment", async (req, res) => {
   console.log("trigger");
   const { sourceId, amount } = req.body;
   console.log(sourceId, amount);
-
 
   try {
     const response = await paymentsApi.createPayment({
       sourceId,
       idempotencyKey: `${Date.now()}`,
       amountMoney: {
-        amount: amount,
+        amount: 60,
         currency: "USD",
       },
     });
@@ -25,16 +22,13 @@ router.post("/create-payment", async (req, res) => {
       JSON.stringify(response.result, (key, value) => (typeof value === "bigint" ? value.toString() : value))
     );
 
-    console.log("response : ", response);
-    console.log("result : ", result);
+    // console.log("response : ", response);
+    // console.log("result : ", result);
 
     res.status(200).json(result);
-    
   } catch (error) {
-
-    console.error("error : ", error);
-    res.status(500).json({ error: error.message });
-
+    console.error("Errors: ", error.errors); // Print the errors object
+    res.status(500).json({ error: error.errors }); // Send the errors object in the response
   }
 });
 

@@ -121,6 +121,8 @@ const submitForm = async (req, res) => {
           "Additional Comments": data.step6.comments || "No additional comments",
           "Credit Check Comments": data.step6.creditCheckComments || "No additional comments",
           "Move Reason": data.step6.moveReason || "No additional comments",
+          "Reciept Uri": data.step6.receiptUrl || "No additional comments",
+          "Payment Id": data.step6.paymentID || "No additional comments",
         },
       ]);
       XLSX.utils.book_append_sheet(wb, commentsSheet, "Additional Comments");
@@ -255,6 +257,16 @@ const submitForm = async (req, res) => {
    <section style="padding: 20px;">
     <h2 style="color: #6a11cb; margin-bottom: 10px;">Reason for moving from your current address?</h2>
     <p>${data.step6.moveReason || "No additional comments provided."}</p>
+  </section>
+
+   <section style="padding: 20px;">
+    <h2 style="color: #6a11cb; margin-bottom: 10px;">Reciept Url</h2>
+    <p>${data.step6.receiptUrl || "No additional comments provided."}</p>
+  </section>
+
+   <section style="padding: 20px;">
+    <h2 style="color: #6a11cb; margin-bottom: 10px;">Payment ID</h2>
+    <p>${data.step6.paymentID || "No additional comments provided."}</p>
   </section>
 
   <!-- Footer Section --> 

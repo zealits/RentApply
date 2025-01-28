@@ -8,6 +8,7 @@ import CustomNavbar from "../components/CustomNavabar.js";
 import { useNavigate } from "react-router-dom";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import { useDispatch, useSelector } from "react-redux";
 
 const MultiStepForm = () => {
   const navigate = useNavigate();
@@ -16,6 +17,9 @@ const MultiStepForm = () => {
   const [isMasked, setIsMasked] = useState(true); // Define isMasked state
   const [showPopup, setShowPopup] = useState(false);
   const [popupMessage, setPopupMessage] = useState("");
+  const { paymentData } = useSelector((state) => state.payment);
+  console.log("paymentData :",paymentData);
+  // console.log("payment Data :",paymentData);
 
   useEffect(() => {
     let isInitialized = false;
@@ -136,6 +140,8 @@ const MultiStepForm = () => {
       comments: "",
       moveReason: "", // Store the reason for moving
       creditCheckComments: "", // Store comments regarding credit/background check
+      receiptUrl: "",
+      paymentID: "",
     },
   });
 
@@ -466,29 +472,29 @@ const MultiStepForm = () => {
     const newErrors = {};
     const { step3 } = formData;
 
-    step3.employers.forEach((employer, index) => {
-      if (!employer.employerName.trim()) {
-        newErrors[`employerName-${index}`] = "Employer Name is required.";
-      }
-      if (!employer.occupation.trim()) {
-        newErrors[`occupation-${index}`] = "Occupation is required.";
-      }
-      if (!employer.employerAddress.trim()) {
-        newErrors[`employerAddress-${index}`] = "Employer Address is required.";
-      }
-      if (!employer.employerPhone.trim()) {
-        newErrors[`employerPhone-${index}`] = "Employer Phone is required.";
-      }
-      if (!employer.startDate.trim()) {
-        newErrors[`startDate-${index}`] = "Start Date is required.";
-      }
-      if (!employer.monthlyPay.trim()) {
-        newErrors[`monthlyPay-${index}`] = "Monthly Pay is required.";
-      }
-      if (!employer.supervisorName.trim()) {
-        newErrors[`supervisorName-${index}`] = "Supervisor's Name is required.";
-      }
-    });
+    // step3.employers.forEach((employer, index) => {
+    //   if (!employer.employerName.trim()) {
+    //     newErrors[`employerName-${index}`] = "Employer Name is required.";
+    //   }
+    //   if (!employer.occupation.trim()) {
+    //     newErrors[`occupation-${index}`] = "Occupation is required.";
+    //   }
+    //   if (!employer.employerAddress.trim()) {
+    //     newErrors[`employerAddress-${index}`] = "Employer Address is required.";
+    //   }
+    //   if (!employer.employerPhone.trim()) {
+    //     newErrors[`employerPhone-${index}`] = "Employer Phone is required.";
+    //   }
+    //   if (!employer.startDate.trim()) {
+    //     newErrors[`startDate-${index}`] = "Start Date is required.";
+    //   }
+    //   if (!employer.monthlyPay.trim()) {
+    //     newErrors[`monthlyPay-${index}`] = "Monthly Pay is required.";
+    //   }
+    //   if (!employer.supervisorName.trim()) {
+    //     newErrors[`supervisorName-${index}`] = "Supervisor's Name is required.";
+    //   }
+    // });
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -496,17 +502,17 @@ const MultiStepForm = () => {
 
   const validateCase3 = () => {
     const newErrors = {};
-    formData.step4.financialDetails.forEach((detail, index) => {
-      if (!detail.type.trim()) {
-        newErrors[`type-${index}`] = "Financial Type is required.";
-      }
-      if (!detail.bank.trim()) {
-        newErrors[`bank-${index}`] = "Bank/Institution is required.";
-      }
-      if (!detail.balance || isNaN(detail.balance) || detail.balance <= 0) {
-        newErrors[`balance-${index}`] = "Valid Balance is required.";
-      }
-    });
+    // formData.step4.financialDetails.forEach((detail, index) => {
+    //   if (!detail.type.trim()) {
+    //     newErrors[`type-${index}`] = "Financial Type is required.";
+    //   }
+    //   if (!detail.bank.trim()) {
+    //     newErrors[`bank-${index}`] = "Bank/Institution is required.";
+    //   }
+    //   if (!detail.balance || isNaN(detail.balance) || detail.balance <= 0) {
+    //     newErrors[`balance-${index}`] = "Valid Balance is required.";
+    //   }
+    // });
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -516,17 +522,17 @@ const MultiStepForm = () => {
     const newErrors = {};
 
     // Validate References
-    formData.step5.references.forEach((reference, index) => {
-      if (!reference.name.trim()) {
-        newErrors[`reference-name-${index}`] = "Name is required.";
-      }
-      if (!reference.phone.trim()) {
-        newErrors[`reference-phone-${index}`] = "Valid phone number is required (10 digits).";
-      }
-      if (!reference.relationship.trim()) {
-        newErrors[`reference-relationship-${index}`] = "Relationship is required.";
-      }
-    });
+    // formData.step5.references.forEach((reference, index) => {
+    //   if (!reference.name.trim()) {
+    //     newErrors[`reference-name-${index}`] = "Name is required.";
+    //   }
+    //   if (!reference.phone.trim()) {
+    //     newErrors[`reference-phone-${index}`] = "Valid phone number is required (10 digits).";
+    //   }
+    //   if (!reference.relationship.trim()) {
+    //     newErrors[`reference-relationship-${index}`] = "Relationship is required.";
+    //   }
+    // });
 
     // Validate Background Information
     if (!formData.step5.backgroundInfo.lateRent) {
@@ -570,17 +576,28 @@ const MultiStepForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    console.log(paymentData?.payment?.receiptUrl);
+    console.log(paymentData?.payment?.id);
+
     if (!validate() || !validateCase1() || !validateCase2() || !validateCase3() || !validateCase4()) {
+      // if (!validate() || !validateCase1() || !validateCase3() || !validateCase4()) {
       setPopupMessage("Please fill out all required fields correctly.");
       setShowPopup(true);
       return;
     }
 
-    const preparedData = { ...formData };
+    const preparedData = {
+      ...formData,
+      step6: {
+        ...formData.step6,
+        receiptUrl: paymentData?.payment?.receiptUrl || "",
+        paymentID: paymentData?.payment?.id || "",
+      },
+    };
 
-    console.log(preparedData);
-
+    console.log("Prepared Data:", preparedData);
     try {
+      console.log("dfdsf :", preparedData);
       const response = await fetch("/api/submit-form", {
         method: "POST",
         headers: {
@@ -601,7 +618,6 @@ const MultiStepForm = () => {
         window.location.reload();
       }, 2000);
       navigate("/");
-   
     } catch (error) {
       setPopupMessage("Error submitting form. Please try again.");
       setShowPopup(true); // Show error message in the popup
@@ -1188,7 +1204,8 @@ const MultiStepForm = () => {
               <div key={index} className="employer-entry">
                 <div className="form-row">
                   <label className="form-label">
-                    Employer Name<span className="required">*</span>
+                    Employer Name
+                    {/* <span className="required">*</span> */}
                     <input
                       type="text"
                       placeholder="Enter employer name"
@@ -1201,7 +1218,8 @@ const MultiStepForm = () => {
                     )}
                   </label>
                   <label className="form-label">
-                    Occupation<span className="required">*</span>
+                    Occupation
+                    {/* <span className="required">*</span> */}
                     <input
                       type="text"
                       placeholder="Enter occupation"
@@ -1212,7 +1230,8 @@ const MultiStepForm = () => {
                     {errors[`occupation-${index}`] && <span className="error">{errors[`occupation-${index}`]}</span>}
                   </label>
                   <label className="form-label">
-                    Employer Address<span className="required">*</span>
+                    Employer Address
+                    {/* <span className="required">*</span> */}
                     <input
                       type="text"
                       placeholder="Enter employer address"
@@ -1228,7 +1247,8 @@ const MultiStepForm = () => {
 
                 <div className="form-row">
                   <label className="form-label">
-                    Employer Phone <span className="required">*</span>
+                    Employer Phone
+                    {/* <span className="required">*</span> */}
                     <input
                       type="tel"
                       placeholder="Enter employer phone"
@@ -1264,7 +1284,8 @@ const MultiStepForm = () => {
                     )}
                   </label>
                   <label className="form-label">
-                    Start Date of Employment<span className="required">*</span>
+                    Start Date of Employment
+                    {/* <span className="required">*</span> */}
                     <input
                       type="date"
                       value={employer.startDate}
@@ -1274,7 +1295,8 @@ const MultiStepForm = () => {
                     {errors[`startDate-${index}`] && <span className="error">{errors[`startDate-${index}`]}</span>}
                   </label>
                   <label className="form-label">
-                    Monthly Pay ($) <span className="required">*</span>
+                    Monthly Pay ($)
+                    {/* <span className="required">*</span> */}
                     <input
                       type="text" // Use "text" to apply custom restrictions
                       placeholder="Enter monthly pay in $ "
@@ -1292,7 +1314,8 @@ const MultiStepForm = () => {
 
                 <div className="form-row">
                   <label className="form-label">
-                    Name of Supervisor <span className="required">*</span>
+                    Name of Supervisor
+                    {/* <span className="required">*</span> */}
                     <input
                       type="text"
                       placeholder="Enter supervisor's name"
@@ -1311,7 +1334,6 @@ const MultiStepForm = () => {
                     Remove Employer
                   </button>
                 )}
-            
               </div>
             ))}
 
@@ -1329,7 +1351,8 @@ const MultiStepForm = () => {
                 {/* Financial Type */}
                 <div className="form-group">
                   <label htmlFor={`type-${index}`} className="form-label">
-                    Financial Type<span className="required">*</span>
+                    Financial Type
+                    {/* <span className="required">*</span> */}
                   </label>
                   <select
                     id={`type-${index}`}
@@ -1351,7 +1374,8 @@ const MultiStepForm = () => {
                 {/* Bank/Institution */}
                 <div className="form-group">
                   <label htmlFor={`bank-${index}`} className="form-label">
-                    Bank / Institution<span className="required">*</span>
+                    Bank / Institution
+                    {/* <span className="required">*</span> */}
                   </label>
                   <input
                     type="text"
@@ -1368,7 +1392,8 @@ const MultiStepForm = () => {
                 {/* Balance */}
                 <div className="form-group">
                   <label htmlFor={`balance-${index}`} className="form-label">
-                    Balance ($)<span className="required">*</span>
+                    Balance ($)
+                    {/* <span className="required">*</span> */}
                   </label>
                   <input
                     type="text" // Use "text" to enable custom validation logic
@@ -1411,7 +1436,8 @@ const MultiStepForm = () => {
               {formData.step5.references.map((reference, index) => (
                 <div key={index} className="reference-entry">
                   <label className="form-label-reference-name">
-                    Name <span className="required">*</span>
+                    Name
+                    {/* <span className="required">*</span> */}
                     <input
                       type="text"
                       value={reference.name}
@@ -1425,7 +1451,8 @@ const MultiStepForm = () => {
                   </label>
 
                   <label className="form-label-reference-phone">
-                    Phone <span className="required">*</span>
+                    Phone
+                    {/* <span className="required">*</span> */}
                     <input
                       type="text"
                       value={reference.phone || ""}
@@ -1461,7 +1488,8 @@ const MultiStepForm = () => {
                   </label>
 
                   <label className="form-label-reference-relationship">
-                    Relationship <span className="required">*</span>
+                    Relationship
+                    {/* <span className="required">*</span> */}
                     <input
                       type="text"
                       value={reference.relationship}
@@ -1686,10 +1714,12 @@ const MultiStepForm = () => {
               className="btn-next-multi-step"
               onClick={() => {
                 const validations = [validate, validateCase1, validateCase2, validateCase3, validateCase4];
+                // const validations = [validate, validateCase1, validateCase3, validateCase4];
+                console.log(validations[currentStep]());
                 if (validations[currentStep]()) {
                   updateStep(currentStep + 1);
                 } else {
-                  setPopupMessage("Please fill out all required fields correctly.");
+                  setPopupMessage("Please fill out all required fields correctly. ");
                   setShowPopup(true); // Show error message in the popup
                 }
               }}
@@ -1698,7 +1728,7 @@ const MultiStepForm = () => {
             </button>
           )}
 
-          {currentStep === steps.length - 1 && (
+          {currentStep === steps.length - 1 && paymentData &&(
             <button
               type="submit"
               onClick={(e) => {
@@ -1706,7 +1736,7 @@ const MultiStepForm = () => {
                   handleSubmit(e);
                 } else {
                   e.preventDefault();
-                  setPopupMessage("Please fill out all required fields correctly.");
+                  setPopupMessage("Please fill out all required fields correctly. ");
                   setShowPopup(true); // Show error message in the popup
                 }
               }}

@@ -1,55 +1,55 @@
 const mongoose = require("mongoose"); 
 
 const OccupantSchema = new mongoose.Schema({
-  name: { type: String, required: true },
-  dob: { type: Date, required: true },
-  relationship: { type: String, required: true },
+  name: { type: String  },
+  dob: { type: Date },
+  relationship: { type: String},
 });
 
 const EmployerSchema = new mongoose.Schema({
-  employerName: { type: String, required: true },
-  occupation: { type: String, required: true },
-  employerAddress: { type: String, required: true },
-  employerPhone: { type: String, required: true },
-  startDate: { type: Date, required: true },
-  monthlyPay: { type: Number, required: true },
-  supervisorName: { type: String, required: true },
+  employerName: { type: String },
+  occupation: { type: String },
+  employerAddress: { type: String },
+  employerPhone: { type: String },
+  startDate: { type: Date },
+  monthlyPay: { type: Number },
+  supervisorName: { type: String },
 });
 
 const FinancialDetailSchema = new mongoose.Schema({
-  type: { type: String, required: true },
-  bank: { type: String, required: true },
-  balance: { type: Number, required: true },
+  type: { type: String },
+  bank: { type: String },
+  balance: { type: Number },
 });
 
 const ReferenceSchema = new mongoose.Schema({
-  name: { type: String, required: true },
-  phone: { type: String, required: true },
-  relationship: { type: String, required: true },
+  name: { type: String },
+  phone: { type: String },
+  relationship: { type: String },
 });
 
 const BackgroundInfoSchema = new mongoose.Schema({
-  lateRent: { type: String, required: true },
-  lawsuit: { type: String, required: true },
-  smoke: { type: String, required: true },
-  pets: { type: String, required: true },
+  lateRent: { type: String },
+  lawsuit: { type: String },
+  smoke: { type: String },
+  pets: { type: String },
 });
 
 const TenantForm = new mongoose.Schema({
   step1: {
-    propertyAddress: { type: String, required: true }, // Full property address
+    propertyAddress: { type: String }, // Full property address
     streetAddressAbbreviation: { type: String },      // Optional street address abbreviation
-    city: { type: String, required: true },           // City of the property
-    state: { type: String, required: true },          // State (e.g. DC)
-    zipCode: { type: String, required: true },        // ZIP Code
-    firstName: { type: String, required: true },
+    city: { type: String },           // City of the property
+    state: { type: String },          // State (e.g. DC)
+    zipCode: { type: String },        // ZIP Code
+    firstName: { type: String },
     middleName: { type: String },
-    lastName: { type: String, required: true },
-    birthDate: { type: Date, required: true },
-    socialSecurity: { type: String, required: true },
-    emailAddress: { type: String, required: true },
-    phoneNumber: { type: String, required: true },
-    driversLicense: { type: String, required: true },
+    lastName: { type: String },
+    birthDate: { type: Date },
+    socialSecurity: { type: String },
+    emailAddress: { type: String },
+    phoneNumber: { type: String },
+    driversLicense: { type: String },
   },
   step2: {
     occupants: [OccupantSchema],
@@ -76,6 +76,8 @@ const TenantForm = new mongoose.Schema({
     comments: { type: String, required: false },  // Updated: added field for user comments
     moveReason: { type: String, required: false }, // Optional field for the reason for moving
     creditCheckComments: { type: String, required: false },  // Optional field for credit check comments
+    receiptUrl: { type: String, required: false },  // Optional field for credit check comments
+    paymentID: { type: String, required: false },  // Optional field for credit check comments
   },
 });
 
