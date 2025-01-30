@@ -13,14 +13,44 @@ const NotificationModal = ({ message, type, onClose }) => (
   </div>
 );
 
+const PaymentButton = ({ isDisabled, timeRemaining, children }) => {
+  return (
+    <div className="payment-button-wrapper">
+      {children}
+      {isDisabled && (
+        <div className="disable-overlay">
+          <p>Please wait {timeRemaining} seconds...</p>
+        </div>
+      )}
+    </div>
+  );
+};
+
+
 const SquarePaymentForm = ({ onClose, onPaymentSuccess, onPaymentError }) => {
   const [loading, setLoading] = useState(false);
+  const [isButtonDisabled, setIsButtonDisabled] = useState(false);
+  const [isDisabled, setIsDisabled] = useState(false);
+  const [timeRemaining, setTimeRemaining] = useState(60);
   const dispatch = useDispatch();
   const { paymentData } = useSelector((state) => state.payment);
   const paymentStatus = paymentData?.payment?.status;
 
   const paymentReceiptUrl = paymentData?.payment?.receiptUrl;
   const TransactionId = paymentData?.payment?.id;
+
+  useEffect(() => {
+    let timer;
+    if (isButtonDisabled && timeRemaining > 0) {
+      timer = setInterval(() => {
+        setTimeRemaining((prev) => prev - 1);
+      }, 1000);
+    } else if (timeRemaining === 0) {
+      setIsButtonDisabled(false);
+      setTimeRemaining(60);
+    }
+    return () => clearInterval(timer);
+  }, [isButtonDisabled, timeRemaining]);
 
   // Automatically close modal if payment is completed
   // useEffect(() => {
@@ -31,8 +61,14 @@ const SquarePaymentForm = ({ onClose, onPaymentSuccess, onPaymentError }) => {
   // }, [paymentStatus, onPaymentSuccess, onClose, TransactionId]);
 
   const handlePaymentComplete = async ({ token }) => {
+    if (isDisabled) {
+      return;
+    }
+
     try {
       setLoading(true);
+      setIsDisabled(true);
+      setTimeRemaining(60);
       // console.log("aniket");
 
       if (token) {
@@ -49,22 +85,54 @@ const SquarePaymentForm = ({ onClose, onPaymentSuccess, onPaymentError }) => {
     }
   };
 
+
+   // Add these styles to your CSS file
+   const styles = `
+   .payment-button-wrapper {
+     position: relative;
+   }
+   
+   .disable-overlay {
+     position: absolute;
+     top: 0;
+     left: 0;
+     right: 0;
+     bottom: 0;
+     background: rgba(0, 0, 0, 0.5);
+     display: flex;
+     align-items: center;
+     justify-content: center;
+     border-radius: 4px;
+     z-index: 10;
+   }
+   
+   .disable-overlay p {
+     color: white;
+     margin: 0;
+     padding: 8px;
+     text-align: center;
+   }
+ `;
+
   return (
     paymentStatus !== "COMPLETED" && (
       <div className="payment-modal">
-        <div className="payment-modal-content">
-          <button className="close-button" onClick={onClose}>
-            ✖
-          </button>
-          <h2 className="modal-title">Pay $60</h2>
-          <p className="modal-description">
-            Please complete the payment to proceed. This amount will be used for your booking.
-          </p>
+      <style>{styles}</style>
+      <div className="payment-modal-content">
+        <button className="close-button" onClick={onClose}>
+          ✖
+        </button>
+        <h2 className="modal-title">Pay $60</h2>
+        <p className="modal-description">
+          Please complete the payment to proceed. This amount will be used for your booking.
+        </p>
 
+        <PaymentButton isDisabled={isDisabled} timeRemaining={timeRemaining}>
           <PaymentForm
             // applicationId="sandbox-sq0idb-Bxh90l3ICb_CDRCk8afEmg"
             // locationId="L4QXZG5MHKKQZ"
-            applicationId="sq0idp-GtV2bseJGu7vISGpUwTWtg"
+
+             applicationId="sq0idp-GtV2bseJGu7vISGpUwTWtg"
             locationId="LK27SNYH75P0Q"
             cardTokenizeResponseReceived={handlePaymentComplete}
           >
@@ -78,12 +146,14 @@ const SquarePaymentForm = ({ onClose, onPaymentSuccess, onPaymentError }) => {
                   "&:hover": {
                     backgroundColor: "#080808",
                   },
+                  pointerEvents: isDisabled ? "none" : "auto",
                 },
               }}
             />
           </PaymentForm>
-        </div>
+        </PaymentButton>
       </div>
+    </div>
     )
   );
 };

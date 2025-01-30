@@ -356,12 +356,14 @@ const MultiStepForm = () => {
   };
 
   const [errors, setErrors] = useState({
-    socialSecurity: "",
+    // socialSecurity: "",
   });
 
   const validate = () => {
     const newErrors = {};
     const { step1 } = formData;
+
+   
 
     // Validate required fields
     if (!step1.propertyAddress.trim()) {
@@ -818,6 +820,8 @@ const MultiStepForm = () => {
                     {isMasked ? <FaEyeSlash /> : <FaEye />}
                   </button>
                 </div>
+                {errors.socialSecurity && <span className="error-message">{errors.socialSecurity}</span>}
+                {/* add error here a */}
               </div>
 
               {/* Email */}
