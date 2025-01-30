@@ -1,6 +1,11 @@
 // actions/paymentActions.js
 import axios from "axios";
-import { CREATE_PAYMENT_REQUEST, CREATE_PAYMENT_SUCCESS, CREATE_PAYMENT_FAILURE } from "../Constants/paymentConstants";
+import {
+  CREATE_PAYMENT_REQUEST,
+  CREATE_PAYMENT_SUCCESS,
+  CREATE_PAYMENT_FAILURE,
+  CLEAR_PAYMENT_ERROR,
+} from "../Constants/paymentConstants";
 
 export const createPayment = (sourceId, amount) => async (dispatch) => {
   try {
@@ -34,3 +39,7 @@ export const createPayment = (sourceId, amount) => async (dispatch) => {
     return { success: false, error: apiErrors };
   }
 };
+
+export const clearPaymentError = () => ({
+  type: CLEAR_PAYMENT_ERROR,
+});

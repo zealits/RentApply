@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { CreditCard, PaymentForm } from "react-square-web-payments-sdk";
 import "./MyPaymentForm.css";
-import { createPayment } from "../services/Actions/paymentActions";
+import { createPayment , clearPaymentError} from "../services/Actions/paymentActions";
 
 const NotificationModal = ({ message, type, onClose }) => (
   <div className={`notification-modal ${type}`}>
@@ -27,30 +27,112 @@ const PaymentButton = ({ isDisabled, timeRemaining, children }) => {
 };
 
 
+// Helper function to format error message
+const formatErrorMessage = (error) => {
+  if (!error) return "An unknown error occurred";
+  
+  // Handle array of errors
+  if (Array.isArray(error)) {
+    const firstError = error[0];
+    if (firstError?.category === "PAYMENT_METHOD_ERROR") {
+      return getPaymentMethodErrorMessage(firstError.code, firstError.detail);
+    }
+    return firstError?.detail || "Payment processing failed. Please try again.";
+  }
+
+  // Handle single error object
+  if (typeof error === "object" && error.category === "PAYMENT_METHOD_ERROR") {
+    return getPaymentMethodErrorMessage(error.code, error.detail);
+  }
+
+  // Fallback for string errors or other formats
+  return error.toString();
+};
+
+const getPaymentMethodErrorMessage = (code, detail) => {
+  switch (code) {
+    case "PAN_FAILURE":
+      return "The card number entered is invalid. Please check and try again.";
+    case "ADDRESS_VERIFICATION_FAILURE":
+      return "The postal code entered does not match the card's billing address.";
+    case "BAD_EXPIRATION":
+      return "The expiration date provided is incorrect or formatted improperly.";
+    case "CARDHOLDER_INSUFFICIENT_PERMISSIONS":
+      return "The card cannot be used for this type of transaction.";
+    case "CARD_EXPIRED":
+      return "The card has expired. Please use a different card.";
+    case "CARD_NOT_SUPPORTED":
+      return "This card is not supported for the transaction.";
+    case "CVV_FAILURE":
+      return "The CVV code entered is incorrect. Please check and try again.";
+    case "EXPIRATION_FAILURE":
+      return "The expiration date is invalid or has expired.";
+    case "GENERIC_DECLINE":
+      return "The transaction was declined by the card issuer.";
+    case "INSUFFICIENT_FUNDS":
+      return "There are insufficient funds on the card.";
+    case "INVALID_ACCOUNT":
+      return "The provided card account could not be found.";
+    case "INVALID_CARD":
+      return "The card details provided are incorrect.";
+    case "INVALID_CARD_DATA":
+      return "The card data is invalid. Please check and try again.";
+    case "INVALID_EXPIRATION":
+      return "The expiration date is invalid or formatted incorrectly.";
+    case "INVALID_PIN":
+      return "The PIN entered is incorrect.";
+    default:
+      return detail || "Payment processing failed. Please try again.";
+  }
+};
+
+
+
 const SquarePaymentForm = ({ onClose, onPaymentSuccess, onPaymentError }) => {
   const [loading, setLoading] = useState(false);
   const [isButtonDisabled, setIsButtonDisabled] = useState(false);
   const [isDisabled, setIsDisabled] = useState(false);
   const [timeRemaining, setTimeRemaining] = useState(60);
   const dispatch = useDispatch();
-  const { paymentData } = useSelector((state) => state.payment);
+  const { paymentData ,error } = useSelector((state) => state.payment);
+  console.log(error);
+  // after submission if there is error then show that error as well 
   const paymentStatus = paymentData?.payment?.status;
 
   const paymentReceiptUrl = paymentData?.payment?.receiptUrl;
   const TransactionId = paymentData?.payment?.id;
 
-  useEffect(() => {
-    let timer;
-    if (isButtonDisabled && timeRemaining > 0) {
-      timer = setInterval(() => {
-        setTimeRemaining((prev) => prev - 1);
-      }, 1000);
-    } else if (timeRemaining === 0) {
-      setIsButtonDisabled(false);
+   // Add error monitoring effect
+   // Modified error monitoring effect
+   useEffect(() => {
+    if (error) {
+      const formattedError = formatErrorMessage(error);
+      onPaymentError(formattedError);
+      setIsDisabled(false);
       setTimeRemaining(60);
     }
-    return () => clearInterval(timer);
-  }, [isButtonDisabled, timeRemaining]);
+  }, [error, onPaymentError]);
+
+
+  useEffect(() => {
+    let timer;
+    if (isDisabled && timeRemaining > 0) {
+      timer = setInterval(() => {
+        setTimeRemaining((prevTime) => {
+          if (prevTime <= 1) {
+            setIsDisabled(false);
+            return 60;
+          }
+          return prevTime - 1;
+        });
+      }, 1000);
+    }
+    return () => {
+      if (timer) {
+        clearInterval(timer);
+      }
+    };
+  }, [isDisabled, timeRemaining]);
 
   // Automatically close modal if payment is completed
   // useEffect(() => {
@@ -76,6 +158,7 @@ const SquarePaymentForm = ({ onClose, onPaymentSuccess, onPaymentError }) => {
 
         // Handle Redux state to check for completion (handled via useEffect)
       } else {
+        setIsDisabled(false); 
         onPaymentError("Tokenization failed!");
       }
     } catch (err) {
@@ -161,11 +244,13 @@ const SquarePaymentForm = ({ onClose, onPaymentSuccess, onPaymentError }) => {
 const FinalDetailsForm = () => {
   const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
   const [notification, setNotification] = useState(null);
+  const dispatch = useDispatch();
   const { paymentData } = useSelector((state) => state.payment);
   const paymentStatus = paymentData?.payment?.status;
   const paymentReceiptUrl = paymentData?.payment?.receiptUrl;
   const paymentId = paymentData?.payment?.id;
   console.log(paymentId);
+
 
   const openPaymentModal = () => setIsPaymentModalOpen(true);
   const closePaymentModal = () => setIsPaymentModalOpen(false);
@@ -173,6 +258,12 @@ const FinalDetailsForm = () => {
   const showNotification = (message, type) => {
     setNotification({ message, type });
     // setTimeout(() => setNotification(null), 5000);
+  };
+
+  const handleNotificationClose = () => {
+    setNotification(null);
+    // Clear the error from Redux state
+    dispatch(clearPaymentError());
   };
 
   return (
@@ -205,7 +296,7 @@ const FinalDetailsForm = () => {
         <NotificationModal
           message={notification.message}
           type={notification.type}
-          onClose={() => setNotification(null)}
+          onClose={handleNotificationClose}
         />
       )}
     </div>
