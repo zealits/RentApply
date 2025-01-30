@@ -23,17 +23,17 @@ const SquarePaymentForm = ({ onClose, onPaymentSuccess, onPaymentError }) => {
   const TransactionId = paymentData?.payment?.id;
 
   // Automatically close modal if payment is completed
-  useEffect(() => {
-    if (paymentStatus === "COMPLETED") {
-      onPaymentSuccess(`Payment successful! Transaction ID: ${TransactionId}`);
-      onClose();
-    }
-  }, [paymentStatus, onPaymentSuccess, onClose, TransactionId]);
+  // useEffect(() => {
+  //   if (paymentStatus === "COMPLETED") {
+  //     onPaymentSuccess(`Payment successful! Transaction ID: ${TransactionId}`);
+  //     onClose();
+  //   }
+  // }, [paymentStatus, onPaymentSuccess, onClose, TransactionId]);
 
   const handlePaymentComplete = async ({ token }) => {
     try {
       setLoading(true);
-      console.log("aniket");
+      // console.log("aniket");
 
       if (token) {
         dispatch(createPayment(token, 60)); // Dispatch action with token and amount
@@ -50,36 +50,41 @@ const SquarePaymentForm = ({ onClose, onPaymentSuccess, onPaymentError }) => {
   };
 
   return (
-    <div className="payment-modal">
-      <div className="payment-modal-content">
-        <button className="close-button" onClick={onClose}>
-          ✖
-        </button>
-        <h2 className="modal-title">Pay $60</h2>
-        <p className="modal-description">
-          Please complete the payment to proceed. This amount will be used for your booking.
-        </p>
-        <PaymentForm
-          applicationId="sq0idp-GtV2bseJGu7vISGpUwTWtg"
-          locationId="LK27SNYH75P0Q"
-          cardTokenizeResponseReceived={handlePaymentComplete}
-        >
-          <CreditCard
-            buttonProps={{
-              isLoading: loading,
-              css: {
-                backgroundColor: "#000",
-                fontSize: "16px",
-                color: "#ffffff",
-                "&:hover": {
-                  backgroundColor: "#080808",
+    paymentStatus !== "COMPLETED" && (
+      <div className="payment-modal">
+        <div className="payment-modal-content">
+          <button className="close-button" onClick={onClose}>
+            ✖
+          </button>
+          <h2 className="modal-title">Pay $60</h2>
+          <p className="modal-description">
+            Please complete the payment to proceed. This amount will be used for your booking.
+          </p>
+
+          <PaymentForm
+            // applicationId="sandbox-sq0idb-Bxh90l3ICb_CDRCk8afEmg"
+            // locationId="L4QXZG5MHKKQZ"
+            applicationId="sq0idp-GtV2bseJGu7vISGpUwTWtg"
+            locationId="LK27SNYH75P0Q"
+            cardTokenizeResponseReceived={handlePaymentComplete}
+          >
+            <CreditCard
+              buttonProps={{
+                isLoading: loading,
+                css: {
+                  backgroundColor: "#000",
+                  fontSize: "16px",
+                  color: "#ffffff",
+                  "&:hover": {
+                    backgroundColor: "#080808",
+                  },
                 },
-              },
-            }}
-          />
-        </PaymentForm>
+              }}
+            />
+          </PaymentForm>
+        </div>
       </div>
-    </div>
+    )
   );
 };
 
@@ -97,7 +102,7 @@ const FinalDetailsForm = () => {
 
   const showNotification = (message, type) => {
     setNotification({ message, type });
-    setTimeout(() => setNotification(null), 5000);
+    // setTimeout(() => setNotification(null), 5000);
   };
 
   return (
@@ -110,10 +115,11 @@ const FinalDetailsForm = () => {
       ) : (
         <div>
           <p className="payment-success-message">Payment completed successfully!</p>
-          <p className="payment-transaction-id">Transaction Id : {paymentId}</p>
-          <a className="payment-receipt-link" href={paymentReceiptUrl} target="_blank" rel="noopener noreferrer">
+          <p className="payment-transaction-id">Submitting your form... Please wait! Do not refresh the page.</p>
+          {/* <p className="payment-transaction-id">Transaction Id : {paymentId}</p> */}
+          {/*   <a className="payment-receipt-link" href={paymentReceiptUrl} target="_blank" rel="noopener noreferrer">
             View Payment Receipt
-          </a>
+          </a> */}
         </div>
       )}
 

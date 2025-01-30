@@ -44,7 +44,7 @@ const Landing = () => {
       </section>
 
       {/* Features Section */}
-      <section className="features">
+      {/* <section className="features">
         <h2 className="features-title">The Finney Difference</h2>
         <div className="features-grid">
           <div className="feature-card">
@@ -69,7 +69,7 @@ const Landing = () => {
             </p>
           </div>
         </div>
-      </section>
+      </section> */}
 
       <AboutUs />
 

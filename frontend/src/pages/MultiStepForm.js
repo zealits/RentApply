@@ -18,7 +18,8 @@ const MultiStepForm = () => {
   const [showPopup, setShowPopup] = useState(false);
   const [popupMessage, setPopupMessage] = useState("");
   const { paymentData } = useSelector((state) => state.payment);
-  console.log("paymentData :",paymentData);
+  console.log("paymentData :", paymentData);
+  const [showConfirmation, setShowConfirmation] = useState(false);
   // console.log("payment Data :",paymentData);
 
   useEffect(() => {
@@ -574,7 +575,9 @@ const MultiStepForm = () => {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    if (e?.preventDefault) {
+      e.preventDefault();
+    }
 
     console.log(paymentData?.payment?.receiptUrl);
     console.log(paymentData?.payment?.id);
@@ -611,18 +614,41 @@ const MultiStepForm = () => {
       }
 
       const result = await response.json();
-      setPopupMessage("Form submitted successfully!");
-      setShowPopup(true); // Show success message in the popup
+      // setPopupMessage("Form submitted successfully!");
+      // setShowPopup(true);
+      setShowConfirmation(true);
 
-      setTimeout(() => {
-        window.location.reload();
-      }, 2000);
-      navigate("/");
+      // setTimeout(() => {
+      //   window.location.reload();
+      // }, 2000);
+      // navigate("/");
     } catch (error) {
       setPopupMessage("Error submitting form. Please try again.");
       setShowPopup(true); // Show error message in the popup
     }
   };
+
+  const handleConfirmationClose = () => {
+    setShowConfirmation(false);
+    setTimeout(() => {
+        window.location.reload();
+      }, 2000);
+      navigate("/");
+  };
+
+  // Watch for payment completion and auto-submit
+  useEffect(() => {
+    console.log("payment trigger bty god");
+    const autoSubmitForm = async () => {
+      if (currentStep === 5 && paymentData?.payment?.status === "COMPLETED") {
+        console.log("payment trigger bty god starting");
+        await handleSubmit();
+        console.log("payment trigger bty god end");
+      }
+    };
+
+    autoSubmitForm();
+  }, [paymentData?.payment?.status]);
 
   const steps = [
     { icon: <FaHome />, title: "Property & Personal Information" },
@@ -637,6 +663,30 @@ const MultiStepForm = () => {
     if (step >= 0 && step < steps.length) {
       setCurrentStep(step);
     }
+  };
+
+  const ConfirmationModal = ({ isOpen, onClose, message, receiptUrl }) => {
+    if (!isOpen) return null;
+
+    return (
+      <div className="rental-confirm-overlay">
+        <div className="rental-confirm-container">
+          <h2 className="rental-confirm-title">Success!</h2>
+          <p className="rental-confirm-message">{message}</p>
+          {receiptUrl && (
+            <p className="rental-confirm-receipt">
+              A payment receipt has been sent to your email. You can also{" "}
+              <a href={receiptUrl} target="_blank" rel="noopener noreferrer" className="rental-confirm-link">
+                view it here
+              </a>
+            </p>
+          )}
+          <button onClick={onClose} className="rental-confirm-button">
+            OK
+          </button>
+        </div>
+      </div>
+    );
   };
 
   const renderFormContent = () => {
@@ -1016,6 +1066,7 @@ const MultiStepForm = () => {
                       )}
                     </label>
 
+
                     <label className="form-label">
                       Date of Birth<span className="required">*</span>
                       <input
@@ -1023,7 +1074,7 @@ const MultiStepForm = () => {
                         value={occupant.dob}
                         max={new Date().toISOString().split("T")[0]} // Disallows future dates
                         onChange={(e) => handleOccupantChange(index, "dob", e.target.value)}
-                        className={`form-input ${errors[`occupantDob-${index}`] ? "input-error" : ""}`}
+                          className="form-input occupantDob"
                       />
                       {errors[`occupantDob-${index}`] && (
                         <span className="error-message">{errors[`occupantDob-${index}`]}</span>
@@ -1676,7 +1727,7 @@ const MultiStepForm = () => {
               className="form-textarea-comments"
             ></textarea>
 
-            <MyPaymentForm />
+            <MyPaymentForm handleSubmit={handleSubmit} />
           </div>
         );
 
@@ -1728,7 +1779,7 @@ const MultiStepForm = () => {
             </button>
           )}
 
-          {currentStep === steps.length - 1 && paymentData &&(
+          {/* {currentStep === steps.length - 1 && paymentData && (
             <button
               type="submit"
               onClick={(e) => {
@@ -1744,9 +1795,17 @@ const MultiStepForm = () => {
             >
               Submit
             </button>
-          )}
+          )} */}
         </div>
       </form>
+
+      {/* Confirmation Modal */}
+      <ConfirmationModal
+        isOpen={showConfirmation}
+        onClose={handleConfirmationClose}
+        message="Your form has been successfully submitted! A copy of the details has been sent to your registered email address."
+        receiptUrl={paymentData?.payment?.receiptUrl}
+      />
 
       {/* Popup Message */}
       {showPopup && (

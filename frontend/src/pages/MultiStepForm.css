@@ -423,6 +423,7 @@
     .financial-detail-row {
       flex-direction: column;
       gap: 15px;
+      min-width: 100%;
     }
   }
   
@@ -567,7 +568,7 @@
 /* Media Queries for Responsiveness */
 @media (max-width: 768px) {
   .background-info div {
-    flex-direction: column; /* Stack radio buttons on smaller screens */
+    flex-direction: row; /* Stack radio buttons on smaller screens */
     gap: 0.5rem;
   }
 }
@@ -667,15 +668,20 @@
   .form-navigation-multi-step {
     /* background-color: red; */
     display: flex;
+    /* flex-direction: column; */
     justify-content: center;
     align-items: center;
     margin-top: 20px;
+    width: 100%;
   }
   
   .btn-prev-multi-step,
   .btn-next-multi-step,
   .btn-submit-multi-step {
-    width: 120px; /* Fixed width for consistency */
+     /* Fixed width for consistency */
+     /* flex-direction: column;
+      */
+      display: flex;
     padding: 10px 15px;
     font-size: 1rem;
     font-weight: bold;
@@ -714,15 +720,42 @@
   }
   
   @media (max-width: 768px) {
+   /* .occupantDob{
+    width: 130%;
+  
+   } */
+  
     .form-navigation-multi-step {
-      flex-direction: column;
-      gap: 10px;
-    }
+      display: flex;
+      flex-direction: row; /* Change to row */
+      justify-content: center;
+      align-items: center;
+      margin-top: 20px;
+      gap: 10px; /* Add spacing between buttons */
+  }
+  
+  .btn-prev-multi-step,
+  .btn-next-multi-step,
+  .btn-submit-multi-step {
+      padding: 10px 15px;
+      font-size: 1rem;
+      font-weight: bold;
+      text-align: center;
+      color: #fff;
+      background-color: #16213e;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+  }
   
     .btn-prev-multi-step,
     .btn-next-multi-step,
     .btn-submit-multi-step {
-      width: 100%; /* Full width on smaller screens */
+      /* width: 100%;
+       */
+       /* width: 50%;  */
+       /* Full width on smaller screens */
     }
   }
   
@@ -888,3 +921,248 @@
     transform: scale(1.1);
   }
 } */
+
+
+
+
+
+
+
+
+/* Overlay */
+.rental-confirm-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  animation: rental-confirm-fade-in 0.3s ease-out;
+}
+
+/* Container */
+.rental-confirm-container {
+  background-color: #ffffff;
+  padding: 1.5rem;
+  border-radius: 0.5rem;
+  max-width: 28rem;
+  width: 90%;
+  margin: 0 1rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  animation: rental-confirm-slide-up 0.3s ease-out;
+}
+
+/* Title */
+.rental-confirm-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  color: #1a1a1a;
+}
+
+/* Message */
+.rental-confirm-message {
+  margin-bottom: 1rem;
+  color: #4b5563;
+  line-height: 1.5;
+}
+
+/* Receipt Section */
+.rental-confirm-receipt {
+  margin-bottom: 1rem;
+  color: #4b5563;
+  line-height: 1.5;
+}
+
+/* Link */
+.rental-confirm-link {
+  color: #2563eb;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.rental-confirm-link:hover {
+  color: #1d4ed8;
+  text-decoration: underline;
+}
+
+/* Button */
+.rental-confirm-button {
+  width: 100%;
+  background-color: #000000;
+  color: #ffffff;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 0.25rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.rental-confirm-button:hover {
+  background-color: #333333;
+}
+
+.rental-confirm-button:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.1);
+}
+
+/* Animations */
+@keyframes rental-confirm-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes rental-confirm-slide-up {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 640px) {
+  .rental-confirm-container {
+    width: 95%;
+    padding: 1.25rem;
+  }
+  
+  .rental-confirm-title {
+    font-size: 1.125rem;
+  }
+  
+  .rental-confirm-message,
+  .rental-confirm-receipt {
+    font-size: 0.875rem;
+  }
+  
+  .rental-confirm-button {
+    padding: 0.5rem;
+  }
+
+
+  .step-multi-step.active-step .step-icon-0,
+  .step-multi-step.active-step .step-icon-1,
+  .step-multi-step.active-step .step-icon-2,
+  .step-multi-step.active-step .step-icon-3,
+  .step-multi-step.active-step .step-icon-4,
+  .step-multi-step.active-step .step-icon-5 {
+    background: #16213e;
+    color: #ffffff;
+    transform: scale(1);
+  }
+}
+
+
+@media (max-width: 720px) {
+  /* .step-multi-step.active-step .step-icon-0,
+  .step-multi-step.active-step .step-icon-1,
+  .step-multi-step.active-step .step-icon-2,
+  .step-multi-step.active-step .step-icon-3,
+  .step-multi-step.active-step .step-icon-4,
+  .step-multi-step.active-step .step-icon-5 {
+    background: #16213e;
+    color: #ffffff;
+    transform: scale(1);
+  } */
+
+}
+
+
+@media (max-width: 768px) {
+  .reference-entry {
+    flex-direction: column;
+  }
+
+  .form-label-reference-name,
+  .form-label-reference-phone,
+  .form-label-reference-relationship {
+    min-width: 100%;
+  }
+}
+
+/* Background Info Section */
+.background-info {
+  margin-top: 20px;
+  background: #fff;
+  /* padding: 15px; */
+  /* border-radius: 6px; */
+  /* box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); */
+}
+
+.radio-group {
+  display: flex;
+  /* flex-direction: column; */
+  /* gap: 15px; */
+  /* margin-top: 5px; */
+}
+
+/* Adjustments for small screens */
+@media (max-width: 600px) {
+  .radio-group {
+    flex-direction: column;
+  }
+}
+
+
+@media (max-width: 768px) {
+  .financial-detail-row {
+    flex-direction: column;
+  }
+
+  .form-group {
+    min-width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .form-title-financial-info {
+    font-size: 1.3rem;
+  }
+
+  .form-input {
+    font-size: 0.9rem;
+    padding: 7px;
+  }
+
+ 
+}
+
+
+@media (max-width: 768px) {
+  .occupant-row {
+    flex-direction: column;
+  }
+
+  .form-label {
+    min-width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .form-subtitle-occupants {
+    font-size: 1.3rem;
+  }
+
+  .form-input {
+    font-size: 0.9rem;
+    padding: 7px;
+  }
+
+  .form-remove-btn,
+  .form-add-btn {
+    display: inline;
+    /* font-size: 0.8rem; */
+    /* padding: 6px 10px; */
+  }
+}

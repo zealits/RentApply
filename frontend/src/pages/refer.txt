@@ -52,8 +52,64 @@ const MultiStepForm = () => {
     },
     step6: {
       comments: "",
+      moveReason: "", // Store the reason for moving
+      creditCheckComments: "", // Store comments regarding credit/background check
+      receiptUrl: "",
+      paymentID: "",
     },
   });
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    console.log(paymentData?.payment?.receiptUrl);
+    console.log(paymentData?.payment?.id);
+
+    if (!validate() || !validateCase1() || !validateCase2() || !validateCase3() || !validateCase4()) {
+      // if (!validate() || !validateCase1() || !validateCase3() || !validateCase4()) {
+      setPopupMessage("Please fill out all required fields correctly.");
+      setShowPopup(true);
+      return;
+    }
+
+    const preparedData = {
+      ...formData,
+      step6: {
+        ...formData.step6,
+        receiptUrl: paymentData?.payment?.receiptUrl || "",
+        paymentID: paymentData?.payment?.id || "",
+      },
+    };
+
+    console.log("Prepared Data:", preparedData);
+    try {
+      console.log("dfdsf :", preparedData);
+      const response = await fetch("/api/submit-form", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(preparedData),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to submit form");
+      }
+
+      const result = await response.json();
+      setPopupMessage("Form submitted successfully!");
+      setShowPopup(true); // Show success message in the popup
+
+      setTimeout(() => {
+        window.location.reload();
+      }, 2000);
+      navigate("/");
+    } catch (error) {
+      setPopupMessage("Error submitting form. Please try again.");
+      setShowPopup(true); // Show error message in the popup
+    }
+  };
+
 
   const steps = [
     { name: "Step 1", icon: "🔑" },
@@ -104,7 +160,9 @@ const MultiStepForm = () => {
       case 4:
         return <div>Step 5 Content</div>;
       case 5:
-        return <div>Step 6 Content</div>;
+        return <div>Step 6 Content
+          <MyPaymentForm  />
+          </div>;
       default:
         return null;
     }
@@ -148,7 +206,19 @@ const MultiStepForm = () => {
               Next
             </button>
           ) : (
-            <button type="submit" className="btn-submit-multi-step">
+           <button
+              type="submit"
+              onClick={(e) => {
+                if (validate()) {
+                  handleSubmit(e);
+                } else {
+                  e.preventDefault();
+                  setPopupMessage("Please fill out all required fields correctly. ");
+                  setShowPopup(true); // Show error message in the popup
+                }
+              }}
+              className="btn-submit-multi-step"
+            >
               Submit
             </button>
           )}
