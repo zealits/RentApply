@@ -36,7 +36,7 @@ const SquarePaymentForm = ({ onClose, onPaymentSuccess, onPaymentError }) => {
       // console.log("aniket");
 
       if (token) {
-        dispatch(createPayment(token, 60)); // Dispatch action with token and amount
+        dispatch(createPayment(token, 6000)); // Dispatch action with token and amount
 
         // Handle Redux state to check for completion (handled via useEffect)
       } else {

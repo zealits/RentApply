@@ -12,7 +12,7 @@ router.post("/create-payment", async (req, res) => {
       sourceId,
       idempotencyKey: `${Date.now()}`,
       amountMoney: {
-        amount: 60,
+        amount: amount,
         currency: "USD",
       },
     });
