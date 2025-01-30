@@ -280,7 +280,7 @@ const submitForm = async (req, res) => {
     console.log("here there");
 
     // Step 4: Prepare email options
-    // , finneypropertiesllc@gmail.com
+    
     // , "finneypropertiesllc@gmail.com"
     const emailOptions = {
       email: ["aniketkhillare172002@gmail.com", "finneypropertiesllc@gmail.com", userEmailAddress], // Replace with recipient's email
